@@ -6,6 +6,13 @@ import (
 	"github.com/pkg/errors"
 )
 
+func NewFixedStack(capa int) *FixedStack {
+	return &FixedStack{
+		stk:      make([]int, capa),
+		capacity: capa,
+	}
+}
+
 // FixedStack ...
 type FixedStack struct {
 	stk      []int // stack
@@ -18,19 +25,19 @@ func (s *FixedStack) Len() int {
 	return s.ptr
 }
 
-// IsEmpty ...
-func (s *FixedStack) IsEmpty() bool {
+// isEmpty ...
+func (s *FixedStack) isEmpty() bool {
 	return s.ptr <= 0
 }
 
-// IsFull ...
-func (s *FixedStack) IsFull() bool {
+// isFull ...
+func (s *FixedStack) isFull() bool {
 	return s.ptr >= s.capacity
 }
 
 // Push ...
 func (s *FixedStack) Push(value int) error {
-	if s.IsFull() {
+	if s.isFull() {
 		return errors.Errorf("capacity over")
 	}
 
@@ -42,7 +49,7 @@ func (s *FixedStack) Push(value int) error {
 
 // Pop ...
 func (s *FixedStack) Pop() (int, error) {
-	if s.IsEmpty() {
+	if s.isEmpty() {
 		return 0, errors.Errorf("empty stack")
 	}
 
@@ -53,7 +60,7 @@ func (s *FixedStack) Pop() (int, error) {
 
 // Peek ...
 func (s *FixedStack) Peek() (int, error) {
-	if s.IsEmpty() {
+	if s.isEmpty() {
 		return 0, errors.Errorf("empty stack")
 	}
 
@@ -100,8 +107,8 @@ func (s *FixedStack) Contains(value int) bool {
 
 // Dump ...
 func (s *FixedStack) Dump() string {
-	if s.IsEmpty() {
-		return fmt.Sprint("empty stack")
+	if s.isEmpty() {
+		return "empty stack"
 	}
 
 	return fmt.Sprintf("%v", s.stk[:s.ptr]) // 현재 스택의 마지막 값의 위치를 ptr 이 나타내기 때문에 ptr 을 넣어줌.
