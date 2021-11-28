@@ -33,5 +33,11 @@ func TestStack() error {
 	println(stk.Contains(10))
 	println(stk.Contains(20))
 
+	code := "l := []string{1,2,3}"
+	linter := NewLinter()
+	if err := linter.Lint(code); err != nil {
+		return err
+	}
+
 	return nil
 }

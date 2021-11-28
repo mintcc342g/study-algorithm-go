@@ -9,17 +9,17 @@ import (
 func main() {
 
 	if err := stack.TestStack(); err != nil {
-		println(err)
+		println(err.Error())
 		return
 	}
 
 	if err := queue.TestQueue(); err != nil {
-		println(err)
+		println(err.Error())
 		return
 	}
 
 	if err := recursion.TestRecursion(); err != nil {
-		println(err)
+		println(err.Error())
 		return
 	}
 }
