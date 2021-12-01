@@ -61,3 +61,24 @@ func (l *LinkedList) IndexOf(data string) int {
 	// 마지막까지 찾지 못했을 경우
 	return -1
 }
+
+func (l *LinkedList) InsertAt(idx int, data string) {
+	currentNode := l.firstNode
+	currentIdx := 0
+
+	for currentIdx < idx { // 삽입하려는 인덱스의 바로 앞 노드를 찾음.
+		currentNode = currentNode.nextNode
+		currentIdx++
+
+		if currentNode.nextNode == nil { // 만약 지정하려는 인덱스가 총 인덱스를 벗어났을 경우
+			break
+		}
+	}
+
+	// 바로 앞 노드를 찾았으면 노드 생성 후, 바로 앞 노드가 원래 갖고 있었던 다음 노드 주소 등록
+	node := NewNode(data)
+	node.AddNextNode(currentNode.nextNode)
+
+	// 바로 앞 노드가 새로 생성된 노드를 참조하도록 변경
+	currentNode.nextNode = node
+}

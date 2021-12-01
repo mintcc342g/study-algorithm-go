@@ -35,5 +35,7 @@ func TestNode() (err error) {
 	}
 	println("got the node's idx", i)
 
+	ll.InsertAt(2, "151515")
+
 	return nil
 }
