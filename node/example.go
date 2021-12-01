@@ -1,6 +1,6 @@
 package node
 
-// 연결 리스트 예제1
+// 연결 리스트
 type Node struct {
 	data     string
 	nextNode *Node
@@ -12,7 +12,7 @@ func NewNode(data string) *Node {
 	}
 }
 
-func (n *Node) addNextNode(nextNode *Node) {
+func (n *Node) AddNextNode(nextNode *Node) {
 	n.nextNode = nextNode
 }
 
@@ -26,9 +26,9 @@ func NewLinkedList(firstNode *Node) *LinkedList {
 	}
 }
 
-func (l *LinkedList) read(idx int) string {
-	currentNode := l.firstNode
-	currentIdx := 0
+func (l *LinkedList) Read(idx int) string {
+	currentNode := l.firstNode // 당연한거지만, 검색 시작은 언제나 첫 노드부터
+	currentIdx := 0            // 이것도 당연히 첫 시작이니까 0부터
 
 	for currentIdx < idx { // 찾고 있는 인덱스에 도달할 때까지 노드의 링크를 계속 따라들어감.
 		currentNode = currentNode.nextNode

@@ -10,18 +10,18 @@ func TestNode() error {
 	ll := NewLinkedList(n0)
 
 	n1 := NewNode("111")
-	n0.addNextNode(n1)
+	n0.AddNextNode(n1)
 
 	n2 := NewNode("222")
-	n1.addNextNode(n2)
+	n1.AddNextNode(n2)
 
 	n3 := NewNode("333")
-	n2.addNextNode(n3)
+	n2.AddNextNode(n3)
 
 	n4 := NewNode("444")
-	n3.addNextNode(n4)
+	n3.AddNextNode(n4)
 
-	r := ll.read(2)
+	r := ll.Read(2)
 	if r == "" {
 		return errors.New("not found the node")
 	}
