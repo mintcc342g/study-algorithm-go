@@ -109,3 +109,27 @@ func (s *SortableArray) quickSort(leftIdx, rightIdx int) {
 	// 이 하위 배열의 왼쪽 포인터는 피벗의 한 칸 오른쪽에서 시작되어야 하므로 pivot + 1
 	s.quickSort(pivot+1, rightIdx)
 }
+
+// 퀵 셀렉션 구현
+// 정렬되지 않은 배열에서 n번째로 작은 값을 찾음.
+func (s *SortableArray) quickSelectLowest(nth, leftIdx, rightIdx int) int {
+	// 기저 조건은 하위 배열의 원소가 1개가 됐을 때
+	if rightIdx-leftIdx <= 0 {
+		return s.arr[leftIdx]
+	}
+
+	// 배열을 분할하고 피벗 위치를 가져옴.
+	// 퀵 셀렉션도 분할을 기반으로 하니까 똑같이 partition 이용해줌.
+	pivot := s.partition(leftIdx, rightIdx)
+
+	if nth < pivot { // 찾고자 하는 값의 순위가 피벗 기준 왼쪽에 있다면
+		s.quickSelectLowest(nth, leftIdx, pivot-1) // 왼쪽 재귀 분할 시작
+	} else if nth > pivot { // 오른쪽일 경우
+		s.quickSelectLowest(nth, pivot+1, rightIdx) // 오른쪽 재귀 분할 시작
+	}
+
+	// 책에서는 찾고자 하는 값의 인덱스 == pivot 이라면서
+	// s.arr[pivot] 하면 된다는데, 실제로 해보면 그렇지 않음.
+	// 추측컨대, partion 을 한 번 더 해야 하는데 못해서 그러는 게 아닌가 싶기도..?
+	return s.arr[nth]
+}
