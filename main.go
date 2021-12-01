@@ -2,6 +2,7 @@ package main
 
 import (
 	"main/array"
+	"main/node"
 	"main/queue"
 	"main/recursion"
 	"main/stack"
@@ -25,6 +26,11 @@ func main() {
 	}
 
 	if err := array.TestArray(); err != nil {
+		println(err.Error())
+		return
+	}
+
+	if err := node.TestNode(); err != nil {
 		println(err.Error())
 		return
 	}
