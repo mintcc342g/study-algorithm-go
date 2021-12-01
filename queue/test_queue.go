@@ -54,5 +54,15 @@ func TestQueue() error {
 	que.Clear()
 	que.Dump() // 값이 없어서 아무것도 출력 안 됨.
 
+	println("// start print manager\n")
+	pm := NewPrintManager()
+	pm.addJob("start Neunwelt Tactic!")
+	pm.addJob("first, Kaede")
+	pm.addJob("second, Miriam")
+	pm.addJob("...")
+	pm.addJob("last, riri")
+	pm.addJob("shoot the magie sphere!\n")
+	pm.run()
+
 	return nil
 }

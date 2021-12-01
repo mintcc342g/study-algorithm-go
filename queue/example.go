@@ -4,7 +4,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// 일반적인 배열로 만드는 큐는 복잡도가 O(n) 인데, 선입선출을 지켜야 하기 때문
+// 일반적인 배열로 만드는 큐는 복잡도가 O(n) 인데, 선입선출을 지키려고 배열 내 원소 이동이 필요하기 때문
 // 링 버퍼 큐는 배열 내 원소를 옮길 필요 없이 front와 rear 의 값만 업데이트 하여 큐를 구현하므로 복잡도가 O(1)
 // 링 버퍼는 오래된 데이터는 버리는 용도로 사용할 수 있음.
 
@@ -134,4 +134,33 @@ func (q *FixedQueue) Dump() { // 큐에 있는 모든 데이터를 맨 앞부터
 		idx = (i + q.front) % q.capacity
 		println("dump", "idx:", idx, "value:", q.que[idx])
 	}
+}
+
+type PrintManager struct {
+	queue []string
+}
+
+func NewPrintManager() *PrintManager {
+	return &PrintManager{
+		queue: []string{},
+	}
+}
+
+func (p *PrintManager) addJob(job string) {
+	p.queue = append(p.queue, job)
+}
+
+func (p *PrintManager) run() {
+	for range p.queue {
+		job := p.shift()
+		println(job)
+	}
+}
+
+func (p *PrintManager) shift() (r string) {
+	r = p.queue[0]
+	if len(p.queue) != 0 {
+		p.queue = p.queue[1:]
+	}
+	return
 }
