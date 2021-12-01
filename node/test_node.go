@@ -1,6 +1,9 @@
 package node
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 func TestNode() (err error) {
 
@@ -36,6 +39,18 @@ func TestNode() (err error) {
 	println("got the node's idx", i)
 
 	ll.InsertAt(2, "151515")
+	for i := 0; i < 5; i++ {
+		r = ll.Read(i)
+		println("check inserted values after insert", r)
+	}
+
+	i = 1
+	println(fmt.Sprintf("node %d will be deleted", i))
+	ll.DeleteAt(i)
+	for i := 0; i < 5; i++ {
+		r = ll.Read(i)
+		println("check values after remove", r)
+	}
 
 	return nil
 }

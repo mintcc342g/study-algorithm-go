@@ -62,23 +62,44 @@ func (l *LinkedList) IndexOf(data string) int {
 	return -1
 }
 
+// 이 예제는 입력한 idx 위치의 +1 위치로 들어감.
+// 2에 넣으려고 하면, 2랑 3사이에 넣는 것으로 보고, 실제로는 3번 인덱스에 들어가게 되는 것
 func (l *LinkedList) InsertAt(idx int, data string) {
 	currentNode := l.firstNode
 	currentIdx := 0
 
-	for currentIdx < idx { // 삽입하려는 인덱스의 바로 앞 노드를 찾음.
+	for currentIdx < idx { // 삽입하려는 인덱스에 있는 노드를 찾음.
 		currentNode = currentNode.nextNode
 		currentIdx++
 
-		if currentNode.nextNode == nil { // 만약 지정하려는 인덱스가 총 인덱스를 벗어났을 경우
+		if currentNode.nextNode == nil { // 총 인덱스를 벗어났을 경우
 			break
 		}
 	}
 
-	// 바로 앞 노드를 찾았으면 노드 생성 후, 바로 앞 노드가 원래 갖고 있었던 다음 노드 주소 등록
+	// 노드를 찾았으면 새 노드 생성 후,
 	node := NewNode(data)
+
+	// 새 노드의 다음 노드값을 삽입하려는 위치에 있던 노드의 다음 노드 값으로 넣어줌.
 	node.AddNextNode(currentNode.nextNode)
 
-	// 바로 앞 노드가 새로 생성된 노드를 참조하도록 변경
+	// 삽입하려는 위치에 있던 노드가 새로 생성된 노드를 참조하도록 변경
 	currentNode.nextNode = node
+}
+
+func (l *LinkedList) DeleteAt(idx int) {
+	currentNode := l.firstNode
+	currentIdx := 0
+
+	for currentIdx < idx-1 { // 삭제하려는 인덱스의 바로 앞 노드를 찾음.
+		currentNode = currentNode.nextNode // 현재 노드 값에는 삭제하려는 노드가 들어갈 것
+		currentIdx++
+
+		if currentNode.nextNode == nil { // 총 인덱스를 벗어났을 경우
+			break
+		}
+	}
+
+	nextNode := currentNode.nextNode.nextNode // 삭제하려는 노드의 바로 뒤 노드를
+	currentNode.nextNode = nextNode           // 삭제하려는 노드의 앞 노드의 nextNode 값으로 넣어줌.
 }
