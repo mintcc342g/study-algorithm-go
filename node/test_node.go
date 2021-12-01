@@ -52,5 +52,34 @@ func TestNode() (err error) {
 		println("check values after remove", r)
 	}
 
+	println("\n// start double linked list test using queue")
+
+	q := NewQueue()
+	q.EnQueue("one node")
+	println("queue's tail is", q.Tail())
+
+	q.EnQueue("two node")
+	q.EnQueue("three node")
+	println("after enqueue, queue's tail is", q.Tail())
+
+	q.DeQueue()
+	println("after dequeue, queue's head is", q.queue.ReadFirst())
+
+	println("\n// start tree node test")
+
+	tn := NewTreeNode(3)
+	tn.Insert(2, tn)
+	tn.Insert(4, tn)
+	tn.Insert(1, tn)
+	tn.Insert(5, tn)
+
+	println("before delete tree node")
+	tn.TraverseAndPrint(tn)
+
+	tn.Delete(3, tn)
+
+	println("after delete tree node")
+	tn.TraverseAndPrint(tn)
+
 	return nil
 }
