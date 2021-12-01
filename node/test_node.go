@@ -2,7 +2,7 @@ package node
 
 import "errors"
 
-func TestNode() error {
+func TestNode() (err error) {
 
 	println("// Start Test Node")
 
@@ -21,11 +21,19 @@ func TestNode() error {
 	n4 := NewNode("444")
 	n3.AddNextNode(n4)
 
+	err = errors.New("not found the node")
+
 	r := ll.Read(2)
 	if r == "" {
-		return errors.New("not found the node")
+		return
 	}
 	println("got the node's data", r)
+
+	i := ll.IndexOf("333")
+	if i < 0 {
+		return
+	}
+	println("got the node's idx", i)
 
 	return nil
 }

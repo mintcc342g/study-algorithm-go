@@ -43,3 +43,21 @@ func (l *LinkedList) Read(idx int) string {
 	// 찾은 것이므로 데이터 리턴
 	return currentNode.data
 }
+
+func (l *LinkedList) IndexOf(data string) int {
+	currentNode := l.firstNode
+	currentIdx := 0
+
+	for currentNode != nil {
+		if currentNode.data == data { // 찾는 데이터를 가진 노드가 있으면
+			return currentIdx // 인덱스 반환하면서 종료
+		}
+
+		// 못 찾았으면 다음 노드로 감.
+		currentNode = currentNode.nextNode
+		currentIdx++
+	}
+
+	// 마지막까지 찾지 못했을 경우
+	return -1
+}
