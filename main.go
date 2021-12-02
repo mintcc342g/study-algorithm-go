@@ -2,6 +2,7 @@ package main
 
 import (
 	"main/array"
+	"main/bfs"
 	"main/node"
 	"main/queue"
 	"main/recursion"
@@ -31,6 +32,11 @@ func main() {
 	}
 
 	if err := node.TestNode(); err != nil {
+		println(err.Error())
+		return
+	}
+
+	if err := bfs.TestBFS(); err != nil {
 		println(err.Error())
 		return
 	}
