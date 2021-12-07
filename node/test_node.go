@@ -7,7 +7,7 @@ import (
 
 func TestNode() (err error) {
 
-	println("// Start Test Node")
+	println("\n// Start Test Node")
 
 	n0 := NewNode("000")
 	ll := NewLinkedList(n0)
