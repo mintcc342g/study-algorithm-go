@@ -104,6 +104,36 @@ func (l *LinkedList) DeleteAt(idx int) {
 	currentNode.nextNode = nextNode           // 삭제하려는 노드의 앞 노드의 nextNode 값으로 넣어줌.
 }
 
+// leetcode
+func (l *LinkedList) DeleteNthFromEnd(idx int) {
+
+	stock := []*Node{}
+	currentNode := l.firstNode
+
+	for currentNode != nil {
+		stock = append(stock, currentNode)
+		currentNode = currentNode.nextNode
+	}
+
+	prev := len(stock) - idx - 1
+	if prev == -1 {
+		l.firstNode = l.firstNode.nextNode
+	} else {
+		currentNode = stock[prev]
+		currentNode.nextNode = currentNode.nextNode.nextNode
+	}
+
+	return
+}
+
+func (l *LinkedList) ReadAll() {
+	currentNode := l.firstNode
+	for currentNode != nil {
+		println("ReadAll", "node.data", currentNode.data)
+		currentNode = currentNode.nextNode
+	}
+}
+
 // 이중 연결 리스트 예제를 위한 노드
 type DoubleLinkNode struct {
 	prevNode *DoubleLinkNode

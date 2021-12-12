@@ -24,6 +24,8 @@ func TestNode() (err error) {
 	n4 := NewNode("444")
 	n3.AddNextNode(n4)
 
+	ll.ReadAll()
+
 	err = errors.New("not found the node")
 
 	r := ll.Read(2)
@@ -51,6 +53,11 @@ func TestNode() (err error) {
 		r = ll.Read(i)
 		println("check values after remove", r)
 	}
+
+	i = 2
+	println(fmt.Sprintf("delete %dth from end", i))
+	ll.DeleteNthFromEnd(i)
+	ll.ReadAll()
 
 	println("\n// start double linked list test using queue")
 
