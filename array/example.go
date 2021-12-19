@@ -132,7 +132,7 @@ func insertionSort(l []int) []int {
 		position = i
 		temp = l[i]
 
-		for l[position-1] > temp {
+		for position != 0 && l[position-1] > temp {
 			l[position] = l[position-1]
 			position = position - 1
 		}
@@ -142,4 +142,17 @@ func insertionSort(l []int) []int {
 
 	println("After insert sort", fmt.Sprintf("%v", l))
 	return l
+}
+
+// leetcode
+func bitXOR(nums []int) {
+	// 짝수번 중복됐을 때에만 제외해줌.
+	// 중복되지 않은 수가 2개 이상이면, 둘을 비트 계산해버려서 숫자가 달라짐.
+	// 중복 순서는 상관없음.
+	res := nums[0]
+	for i := 1; i < len(nums); i++ {
+		res = res ^ nums[i]
+	}
+
+	println("\nbit XOR :", res)
 }

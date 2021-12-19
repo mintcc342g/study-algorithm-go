@@ -15,8 +15,11 @@ func TestArray() error {
 	arr = []int{2, 34, 31, 55, 56, 90, 3, 22}
 	selectionSort(arr)
 
-	arr = []int{2, 34, 31, 55, 56, 90, 3, 22}
+	arr = []int{34, 2, 31, 55, 56, 90, 3, 22}
 	insertionSort(arr)
+
+	arr = []int{22, 4, 5, 22, 1, 5, 5, 5, 4}
+	bitXOR(arr)
 
 	return nil
 }
