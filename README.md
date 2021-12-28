@@ -1,4 +1,4 @@
-# study_algorithm_go
+# Study Algorithm with Go
 
 - It is the project for studying algorithm with Golang.
 - References
