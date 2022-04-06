@@ -1,10 +1,10 @@
-package bfsdfs
+package graph
 
 import "fmt"
 
-func TestBFSDFS() (err error) {
+func TestGraph() (err error) {
 
-	println("\n// start test bfs/dfs")
+	println("\n///// Graph")
 
 	riri := NewPerson("Riri")
 	yuyu := NewPerson("Yuyu")
@@ -46,11 +46,11 @@ func TestBFSDFS() (err error) {
 		NewPerson("himari"),
 	)
 
-	println(fmt.Sprintf("start display %s's network by bfs", riri.name))
-	riri.DisplayNetwork()
+	println(fmt.Sprintf("\n// start display %s's network by dfs", riri.name))
+	riri.DFS()
 
-	println(fmt.Sprintf("start display %s's network by dfs", riri.name))
-	riri.DisplayNetworkByDfs()
+	println(fmt.Sprintf("\n// start display %s's network by bfs", riri.name))
+	riri.BFS()
 
 	return nil
 }
