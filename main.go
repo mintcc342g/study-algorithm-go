@@ -3,6 +3,7 @@ package main
 import (
 	"main/array"
 	"main/graph"
+	"main/heap"
 
 	"main/node"
 	"main/queue"
@@ -38,6 +39,11 @@ func main() {
 	}
 
 	if err := graph.TestGraph(); err != nil {
+		println(err.Error())
+		return
+	}
+
+	if err := heap.TestHeap(); err != nil {
 		println(err.Error())
 		return
 	}

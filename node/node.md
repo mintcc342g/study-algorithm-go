@@ -11,7 +11,6 @@
 >   4. [Tree](#Tree)
 >   5. [Binary Tree](#Binary_Tree)
 >   6. [Binary Search Tree](#Binary_Search_Tree)
->   7. [Heap Tree](#Heap_Tree)
 
 <br/>
 
@@ -70,9 +69,5 @@
 <br/>
 
 ## Binary Search Tree
-
-<br/>
-
-## Heap Tree
 
 <br/>
