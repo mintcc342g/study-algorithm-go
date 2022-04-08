@@ -66,7 +66,7 @@ func (h *MinHeap) Pop() uint32 {
 		right := parentIdx*2 + 1
 
 		if h.elements[parentIdx] > h.elements[left] || h.elements[parentIdx] > h.elements[right] {
-			if h.elements[left] < h.elements[right] {
+			if h.elements[left] < h.elements[right] { // 우선순위 큐라서 왼쪽이 항상 오른쪽보다 작아야 함.
 				h.elements[parentIdx], h.elements[left] = h.elements[left], h.elements[parentIdx]
 				parentIdx = left
 			} else {

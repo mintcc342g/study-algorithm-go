@@ -183,6 +183,10 @@ func (l *DoubleLinkedList) ReadLast() string {
 	return l.lastNode.data
 }
 
+func (l *DoubleLinkedList) ReadLastNext() string {
+	return l.lastNode.nextNode.data
+}
+
 func (l *DoubleLinkedList) ReadFirst() string {
 	return l.firstNode.data
 }
@@ -296,13 +300,15 @@ func (t *TreeNode) lift(node, delNode *TreeNode) *TreeNode {
 
 	// 현재 노드의 오른쪽에 자식이 있건 말건,
 	// 일단 왼쪽에 자식이 '없'다면,
-	// 이 함수의 현재 노드가 후속자 노드라는 뜻이 되고,
-	// 현재 노드의 값을 삭제 대상 노드의 새로운 값을 할당함???
-	delNode.data = node.data // 후속자 노드의 오른쪽 자식이 부모의 왼쪽 자식으로 쓰일 수 있도록 반환함.
-	return node.right
+	// 이 함수의 현재 노드가 후속자 노드라는 뜻이 됨.
+	// 왜냐면 삭제 대상은 현재 노드의 부모(혹은 조상)일거고,
+	// 부모(혹은 조상)가 삭제되면 왼쪽이 없으니까 오른쪽이 후계자가 되어야 하기 때문임.
+	// 그래서 현재 노드의 값을 삭제 대상 노드 위치로 넣어주는 것
+	delNode.data = node.data
+	return node.right // 현재 노드한테 딸려있던 자식도 현재 노드가 원래 있었던 위치로 올려줌.
 }
 
-// 이진 트리의 중위 순회
+// 이진 트리의 중위 순회 (왼->부->오)
 // 트리에 있는 값을 전부 방문하면서 순서대로 출력해줌.
 func (t *TreeNode) TraverseAndPrint(node *TreeNode) {
 	if node == nil {
@@ -311,4 +317,24 @@ func (t *TreeNode) TraverseAndPrint(node *TreeNode) {
 	node.TraverseAndPrint(node.left)
 	println(node.data)
 	node.TraverseAndPrint(node.right)
+}
+
+// 전위 순회 (부->왼->오)
+func (t *TreeNode) PreOrderTraversal(node *TreeNode) {
+	if node == nil {
+		return
+	}
+	println(node.data)
+	node.TraverseAndPrint(node.left)
+	node.TraverseAndPrint(node.right)
+}
+
+// 후위 순회 (왼->오->부)
+func (t *TreeNode) PostOrderTraversal(node *TreeNode) {
+	if node == nil {
+		return
+	}
+	node.TraverseAndPrint(node.left)
+	node.TraverseAndPrint(node.right)
+	println(node.data)
 }
