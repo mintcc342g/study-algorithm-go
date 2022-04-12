@@ -1,14 +1,14 @@
 package main
 
 import (
-	"main/array"
-	"main/graph"
-	"main/heap"
+	"study-algorithm-go/array"
+	"study-algorithm-go/graph"
+	"study-algorithm-go/heap"
 
-	"main/node"
-	"main/queue"
-	"main/recursion"
-	"main/stack"
+	"study-algorithm-go/node"
+	"study-algorithm-go/queue"
+	"study-algorithm-go/recursion"
+	"study-algorithm-go/stack"
 )
 
 func main() {
