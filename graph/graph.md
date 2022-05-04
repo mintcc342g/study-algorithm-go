@@ -22,11 +22,14 @@
 ## 관련 알고리즘
 - BFS; Breadth-First Search, DFS; Depth-First Search
     - 책에서는 example 에서 구현한 BFS의 시간 복잡도가 O(V + E) 라고 함.
-    - V는 vertex를 방문하는 횟수
-        - N이랑 같은데, N이라고 안 한 이유는 edge랑 구별하려고 다른 표기를 사용했다는 듯
-    - E는 vertex에 연결된 edge를 통과하는 횟수
-        - 사실 각 vertex는 큐에 추가될 때랑 vertex를 방문할 때 같은 edge 를 통과함.
-        - 그래서 사실은 edge 당 2번씩 통과하므로 2E 가 맞는데, 빅오에서 상수는 무시하니까 E만 썼다는 듯
+        - V는 vertex를 방문하는 횟수
+            - N이랑 같은데, N이라고 안 한 이유는 edge랑 구별하려고 다른 표기를 사용했다는 듯
+        - E는 vertex에 연결된 edge를 통과하는 횟수
+            - 사실 각 vertex는 큐에 추가될 때랑 vertex를 방문할 때 같은 edge 를 통과함.
+            - 그래서 사실은 edge 당 2번씩 통과하므로 2E 가 맞는데, 빅오에서 상수는 무시하니까 E만 썼다는 듯
+    - 알고리즘 문제에서 사용할 때
+        - BSF: queue로 구현, 최단거리 구하기 문제
+        - DFS: 재귀/stack으로 구현, 검색 대상이 큰 문제, 경로의 가중치 등을 저장하는 문제
 
 <br/>
 
