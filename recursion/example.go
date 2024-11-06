@@ -90,7 +90,7 @@ func (s *SortableArray) swap(fstIdx, sndIdx int) {
 }
 
 // 퀵 정렬을 재귀로 구현
-func (s *SortableArray) quickSort(leftIdx, rightIdx int) {
+func (s *SortableArray) QuickSort(leftIdx, rightIdx int) {
 	// 기저 조건은 하위 배열의 원소가 0~1개 일 때
 	if rightIdx-leftIdx <= 0 {
 		return
@@ -103,16 +103,16 @@ func (s *SortableArray) quickSort(leftIdx, rightIdx int) {
 
 	// 피벗의 왼쪽 배열에 대한 퀵 정렬
 	// 이 하위 배열의 오른쪽 포인터는 피벗의 한 칸 왼쪽에서 시작되어야 하므로 pivot -1
-	s.quickSort(leftIdx, pivot-1)
+	s.QuickSort(leftIdx, pivot-1)
 
 	// 피벗의 오른쪽에 대한 퀵 정렬
 	// 이 하위 배열의 왼쪽 포인터는 피벗의 한 칸 오른쪽에서 시작되어야 하므로 pivot + 1
-	s.quickSort(pivot+1, rightIdx)
+	s.QuickSort(pivot+1, rightIdx)
 }
 
 // 퀵 셀렉션 구현
-// 정렬되지 않은 배열에서 n번째로 작은 값을 찾음.
-func (s *SortableArray) quickSelectLowest(nth, leftIdx, rightIdx int) int {
+// 정렬되지 않은 배열에서 n번째로 작은 값을 찾음. (n은 0부터 시작)
+func (s *SortableArray) QuickSelectLowest(nth, leftIdx, rightIdx int) int {
 	// 기저 조건은 하위 배열의 원소가 1개가 됐을 때
 	if rightIdx-leftIdx <= 0 {
 		return s.arr[leftIdx]
@@ -123,9 +123,9 @@ func (s *SortableArray) quickSelectLowest(nth, leftIdx, rightIdx int) int {
 	pivot := s.partition(leftIdx, rightIdx)
 
 	if nth < pivot { // 찾고자 하는 값의 순위가 피벗 기준 왼쪽에 있다면
-		s.quickSelectLowest(nth, leftIdx, pivot-1) // 왼쪽 재귀 분할 시작
+		s.QuickSelectLowest(nth, leftIdx, pivot-1) // 왼쪽 재귀 분할 시작
 	} else if nth > pivot { // 오른쪽일 경우
-		s.quickSelectLowest(nth, pivot+1, rightIdx) // 오른쪽 재귀 분할 시작
+		s.QuickSelectLowest(nth, pivot+1, rightIdx) // 오른쪽 재귀 분할 시작
 	}
 
 	// 책에서는 찾고자 하는 값의 인덱스 == pivot 이라면서

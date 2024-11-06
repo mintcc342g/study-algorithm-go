@@ -7,23 +7,16 @@ import (
 
 	"study-algorithm-go/node"
 	"study-algorithm-go/queue"
-	"study-algorithm-go/recursion"
 	"study-algorithm-go/stack"
 )
 
 func main() {
-
 	if err := stack.TestStack(); err != nil {
 		println(err.Error())
 		return
 	}
 
 	if err := queue.TestQueue(); err != nil {
-		println(err.Error())
-		return
-	}
-
-	if err := recursion.TestRecursion(); err != nil {
 		println(err.Error())
 		return
 	}
