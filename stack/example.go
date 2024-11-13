@@ -38,7 +38,7 @@ func (s *FixedStack) isFull() bool {
 // Push ...
 func (s *FixedStack) Push(value int) error {
 	if s.isFull() {
-		return errors.Errorf("capacity over")
+		return errors.New("capacity over")
 	}
 
 	s.stk[s.ptr] = value
@@ -50,7 +50,7 @@ func (s *FixedStack) Push(value int) error {
 // Pop ...
 func (s *FixedStack) Pop() (int, error) {
 	if s.isEmpty() {
-		return 0, errors.Errorf("empty stack")
+		return 0, errors.New("empty stack")
 	}
 
 	s.ptr--
@@ -61,7 +61,7 @@ func (s *FixedStack) Pop() (int, error) {
 // Peek ...
 func (s *FixedStack) Peek() (int, error) {
 	if s.isEmpty() {
-		return 0, errors.Errorf("empty stack")
+		return 0, errors.New("empty stack")
 	}
 
 	return s.stk[s.ptr-1], nil
@@ -80,7 +80,7 @@ func (s *FixedStack) Find(value int) (int, error) {
 		}
 	}
 
-	return 0, errors.Errorf("not found")
+	return 0, errors.New("not found")
 }
 
 // Count ...
@@ -150,7 +150,7 @@ func (l *Linter) Lint(txt string) error {
 			l.pushToStack(r)
 		} else if l.isClosingBrace(r) {
 			if l.closesMostRecentOpeningBrace(r) {
-				l.popFromStack(r)
+				l.popFromStack()
 			} else {
 				return errors.Errorf("incorrect closing brace[%s]", string(r))
 			}
@@ -168,7 +168,7 @@ func (l *Linter) pushToStack(r rune) {
 	l.stack = append(l.stack, r)
 }
 
-func (l *Linter) popFromStack(r rune) {
+func (l *Linter) popFromStack() {
 	l.stack = l.stack[:len(l.stack)-1]
 }
 

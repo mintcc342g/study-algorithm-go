@@ -7,15 +7,9 @@ import (
 
 	"study-algorithm-go/node"
 	"study-algorithm-go/queue"
-	"study-algorithm-go/stack"
 )
 
 func main() {
-	if err := stack.TestStack(); err != nil {
-		println(err.Error())
-		return
-	}
-
 	if err := queue.TestQueue(); err != nil {
 		println(err.Error())
 		return
