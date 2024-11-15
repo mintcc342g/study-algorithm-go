@@ -33,9 +33,7 @@ func BinarySearch(sortedArray []int, value int) (int, error) {
 /*
  ** 버블 정렬
  */
-func bubbleSort(l []int) []int {
-	println("Before bubble sort", fmt.Sprintf("%v", l))
-
+func BubbleSort(l []int) []int {
 	sortedIdx := len(l) - 1 // 정렬 완료된 부분은 빼고 for문 돌기 위한 카운트
 	sorted := false         // 전체 정렬 완료 여부
 
@@ -50,8 +48,6 @@ func bubbleSort(l []int) []int {
 		}
 		sortedIdx = sortedIdx - 1 // 매 passthrough 마다 가장 큰 값은 정렬이 됐을거니까 -1씩 해주는 것
 	}
-
-	println("After bubble sort", fmt.Sprintf("%v", l))
 
 	return l
 }

@@ -41,6 +41,14 @@ func TestBinarySearch(t *testing.T) {
 	}
 }
 
+func TestBubbleSort(t *testing.T) {
+	var (
+		l        = []int{3, 100, 1, 5, 63, 45, 47, 49, 91, 84, 85, 44, 2, 11}
+		expected = []int{1, 2, 3, 5, 11, 44, 45, 47, 49, 63, 84, 85, 91, 100}
+	)
+	assert.EqualValues(t, expected, BubbleSort(l))
+}
+
 func TestQuickSort(t *testing.T) {
 	type testCase struct {
 		scenario string
