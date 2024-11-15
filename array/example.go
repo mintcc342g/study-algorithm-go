@@ -32,7 +32,7 @@ func binarySearch(sortedArray []int, value int) error {
 }
 
 /*
- *** 버블 정렬
+ ** 버블 정렬
  */
 func bubbleSort(l []int) []int {
 	println("Before bubble sort", fmt.Sprintf("%v", l))
@@ -58,13 +58,13 @@ func bubbleSort(l []int) []int {
 }
 
 /*
- *** 선택 정렬
+ ** 선택 정렬
  */
 func selectionSort(l []int) {
 	println("\nBefore selection sort", fmt.Sprintf("%v", l))
 
 	var minValIdx int
-	for i, _ := range l {
+	for i := range l {
 		minValIdx = i
 		for k := i + 1; k < len(l); k++ { // i번째 다음부터 진행하는 이유는 i번째를 포함해서 그 앞은 정렬이 되어 있으니까
 			if l[k] < l[minValIdx] {
@@ -81,7 +81,7 @@ func selectionSort(l []int) {
 }
 
 /*
- *** 삽입 정렬
+ ** 삽입 정렬
  */
 func insertionSort(l []int) []int {
 	println("\nBefore insert sort", fmt.Sprintf("%v", l))
@@ -103,6 +103,45 @@ func insertionSort(l []int) []int {
 
 	println("After insert sort", fmt.Sprintf("%v", l))
 	return l
+}
+
+/*
+ ** 퀵 정렬
+ */
+
+func QuickSort(l []int) []int {
+	return qsort(l, 0, len(l)-1)
+}
+
+func qsort(l []int, left, right int) []int {
+	if right-left < 1 {
+		return l
+	}
+
+	pivot := partition(l, left, right)
+	l = qsort(l, left, pivot-1)
+	l = qsort(l, pivot+1, right)
+
+	return l
+}
+
+func partition(l []int, left, right int) int {
+	fmt.Printf("list: %v, left: %d, right: %d", l, left, right)
+	pivot := right
+	right--
+	for left <= right {
+		if l[left] < l[pivot] {
+			left++
+		} else if l[right] > l[pivot] {
+			right--
+		} else { // else if l[left] >= l[pivot] && l[right] <= l[pivot]
+			l[left], l[right] = l[right], l[left]
+		}
+	}
+
+	l[left], l[pivot] = l[pivot], l[left]
+
+	return left
 }
 
 // leetcode
