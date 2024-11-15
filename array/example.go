@@ -109,24 +109,29 @@ func insertionSort(l []int) []int {
  ** 퀵 정렬
  */
 
-func QuickSort(l []int) []int {
-	return qsort(l, 0, len(l)-1)
+func QuickSort(l []int, desc bool) []int {
+	return qsort(l, 0, len(l)-1, desc)
 }
 
-func qsort(l []int, left, right int) []int {
+func qsort(l []int, left, right int, desc bool) []int {
 	if right-left < 1 {
 		return l
 	}
 
-	pivot := partition(l, left, right)
-	l = qsort(l, left, pivot-1)
-	l = qsort(l, pivot+1, right)
+	var pivot int
+	if desc {
+		pivot = partitionDesc(l, left, right)
+	} else {
+		pivot = partitionAsc(l, left, right)
+	}
+	l = qsort(l, left, pivot-1, desc)
+	l = qsort(l, pivot+1, right, desc)
 
 	return l
 }
 
-func partition(l []int, left, right int) int {
-	fmt.Printf("list: %v, left: %d, right: %d", l, left, right)
+func partitionAsc(l []int, left, right int) int {
+	fmt.Printf("list: %v, left: %d, right: %d\n", l, left, right)
 	pivot := right
 	right--
 	for left <= right {
@@ -142,6 +147,55 @@ func partition(l []int, left, right int) int {
 	l[left], l[pivot] = l[pivot], l[left]
 
 	return left
+}
+
+func partitionDesc(l []int, left, right int) int {
+	fmt.Printf("list: %v, left: %d, right: %d\n", l, left, right)
+	pivot := left
+	left++
+	for left <= right {
+		if l[left] > l[pivot] {
+			left++
+		} else if l[right] < l[pivot] {
+			right--
+		} else { // else if l[left] >= l[pivot] && l[right] <= l[pivot]
+			l[left], l[right] = l[right], l[left]
+		}
+	}
+
+	l[right], l[pivot] = l[pivot], l[right]
+
+	return right
+}
+
+/*
+ ** 퀵 선택
+ */
+
+func QuickSelection(l []int, k uint, largest bool) int {
+	// k번째는 1부터 시작하는데, 기준이 되는 pivot은 0부터 시작하니까 k-1 해줌.
+	return qselection(l, int(k-1), largest, 0, len(l)-1)
+}
+
+func qselection(l []int, k int, largest bool, left, right int) int {
+	if right-left < 1 {
+		return l[right]
+	}
+
+	var pivot int
+	if largest {
+		pivot = partitionDesc(l, left, right)
+	} else {
+		pivot = partitionAsc(l, left, right)
+	}
+
+	if k > pivot {
+		return qselection(l, k, largest, pivot+1, right)
+	} else if k < pivot {
+		return qselection(l, k, largest, left, pivot-1)
+	}
+
+	return l[pivot]
 }
 
 // leetcode
