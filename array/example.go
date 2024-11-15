@@ -55,9 +55,7 @@ func BubbleSort(l []int) []int {
 /*
  ** 선택 정렬
  */
-func selectionSort(l []int) {
-	println("\nBefore selection sort", fmt.Sprintf("%v", l))
-
+func SelectionSort(l []int) []int {
 	var minValIdx int
 	for i := range l {
 		minValIdx = i
@@ -72,15 +70,13 @@ func selectionSort(l []int) {
 		}
 	}
 
-	println("After selection sort", fmt.Sprintf("%v", l))
+	return l
 }
 
 /*
  ** 삽입 정렬
  */
-func insertionSort(l []int) []int {
-	println("\nBefore insert sort", fmt.Sprintf("%v", l))
-
+func InsertionSort(l []int) []int {
 	var position int
 	var temp int
 
@@ -96,7 +92,6 @@ func insertionSort(l []int) []int {
 		l[position] = temp
 	}
 
-	println("After insert sort", fmt.Sprintf("%v", l))
 	return l
 }
 
