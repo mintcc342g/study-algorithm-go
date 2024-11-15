@@ -8,8 +8,7 @@ import (
 /*
  ** 정렬된 배열에서의 이진 검색
  */
-func binarySearch(sortedArray []int, value int) error {
-
+func BinarySearch(sortedArray []int, value int) (int, error) {
 	lower := 0
 	upper := len(sortedArray) - 1
 	var mid int
@@ -24,11 +23,11 @@ func binarySearch(sortedArray []int, value int) error {
 		} else if midPoint < value { // 가운데 값 보다 찾으려는 값이 크면,
 			lower = mid + 1 // 최소값 범위를 하나 높여줌.
 		} else if value == midPoint { // 일치하면 끝!
-			return nil
+			return mid, nil
 		}
 	}
 
-	return errors.New("not found")
+	return -1, errors.New("not found")
 }
 
 /*

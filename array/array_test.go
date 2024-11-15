@@ -1,10 +1,45 @@
 package array
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestBinarySearch(t *testing.T) {
+	type testCase struct {
+		scenario string
+
+		l           []int
+		val         int
+		expected    int
+		expectedErr error
+	}
+	testCases := []testCase{
+		{
+			scenario:    "success",
+			l:           []int{1, 4, 6, 10, 11, 25, 28, 31, 37, 40, 44, 49, 50, 55, 60, 67, 69, 99},
+			val:         55,
+			expected:    13,
+			expectedErr: nil,
+		},
+		{
+			scenario:    "not found",
+			l:           []int{1, 4, 6, 10, 11, 25, 28, 31, 37, 40, 44, 49, 50, 55, 60, 67, 69, 99},
+			val:         100000,
+			expected:    -1,
+			expectedErr: errors.New("not found"),
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.scenario, func(t *testing.T) {
+			actual, err := BinarySearch(tc.l, tc.val)
+			assert.Equal(t, tc.expectedErr, err)
+			assert.Equal(t, tc.expected, actual)
+		})
+	}
+}
 
 func TestQuickSort(t *testing.T) {
 	type testCase struct {
