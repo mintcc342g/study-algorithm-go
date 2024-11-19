@@ -14,7 +14,7 @@
     - 노드를 연결한 선
 - 인접한 정점; adjacent vertex
 - degree
-    - 무방향 그래프; undirected graph에서 vertext에 연결된 edge의 개수
+    - 무방향 그래프; undirected graph에서 vertex에 연결된 edge의 개수
 - indegree / outdegree
     - directed graph에서 들어오고/나가는 방향을 나타내는 degree
 
