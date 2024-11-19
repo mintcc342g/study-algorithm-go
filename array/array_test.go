@@ -86,6 +86,12 @@ func TestQuickSort(t *testing.T) {
 			desc:     true,
 			expected: []int{8, 7, 4, 3, 2},
 		},
+		{
+			scenario: "desc with duplicated numbers",
+			l:        []int{3, 2, 3, 1, 2, 4, 5, 5, 6},
+			desc:     true,
+			expected: []int{6, 5, 5, 4, 3, 3, 2, 2, 1},
+		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.scenario, func(t *testing.T) {

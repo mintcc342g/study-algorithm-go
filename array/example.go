@@ -125,9 +125,9 @@ func partitionAsc(l []int, left, right int) int {
 	pivot := right
 	right--
 	for left <= right {
-		if l[left] < l[pivot] {
+		if l[left] <= l[pivot] {
 			left++
-		} else if l[right] > l[pivot] {
+		} else if l[right] >= l[pivot] {
 			right--
 		} else { // else if l[left] >= l[pivot] && l[right] <= l[pivot]
 			l[left], l[right] = l[right], l[left]
@@ -144,9 +144,9 @@ func partitionDesc(l []int, left, right int) int {
 	pivot := left
 	left++
 	for left <= right {
-		if l[left] > l[pivot] {
+		if l[left] >= l[pivot] {
 			left++
-		} else if l[right] < l[pivot] {
+		} else if l[right] <= l[pivot] {
 			right--
 		} else { // else if l[left] >= l[pivot] && l[right] <= l[pivot]
 			l[left], l[right] = l[right], l[left]
