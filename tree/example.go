@@ -1,4 +1,4 @@
-package heap
+package tree
 
 /**
  * MinHeap
@@ -26,7 +26,7 @@ func (h *MinHeap) Add(element uint32) {
 	h.last++ // 하나 넣을 거니까 현재 last 늘려줌.
 
 	// 최대 사이즈보다 많이 넣게 될 경우 안 넣고 끝냄.
-	if h.last > h.size {
+	if h.last >= h.size {
 		h.last-- // 원상복귀
 		println("Added too many elements")
 		return
@@ -90,13 +90,13 @@ func findKthLargest(nums []int, k int) int {
 	//   - 트리로 배열을 구성했을 경우, 배열의 뒤 절반은 리프 노드임.
 	//   - 최대값을 찾는 문제이므로, min-heap 형태로 바꿔줘야 하는데,
 	//   - 바꿀 때 부모 노드를 기준으로 잡아야 하니까 배열의 절반만 도는 거임.
-	for i := len(nums)/2 - 1; i > -1; i-- { // 주의할 점은 0부터 마지막 인덱스까지 전부 따진다는 것
+	l := len(nums) - 1
+	for i := l / 2; i > -1; i-- { // 주의할 점은 0부터 마지막 인덱스까지 전부 따진다는 것
 		// 최대힙 형태로 만들어줌. 최대값 찾아야 하니까.
-		heapify(nums, 0, len(nums)-1, i)
+		heapify(nums, 0, l, i)
 	}
 
 	var res int
-	lastIdx := len(nums) - 1
 
 	// 이미 배열은 max heap 상태이며, k번째를 찾아야 함.
 	// 밑의 방식은 현재 루트값과 자식값을 교환한 후에 heap을 재구성 하는 것
@@ -107,9 +107,9 @@ func findKthLargest(nums []int, k int) int {
 	// 그 값이 res에 담길 거고.
 	for i := 0; i < k; i++ {
 		res = nums[0]
-		nums[0], nums[lastIdx] = nums[lastIdx], nums[0]
-		heapify(nums, 0, lastIdx-1, 0) // heap 재구성 하는데, 루트 마지막 인덱스 빼고, 무조건 0번 루트에서 시작함.
-		lastIdx--
+		nums[0], nums[l] = nums[l], nums[0]
+		heapify(nums, 0, l-1, 0) // heap 재구성 하는데, 루트 마지막 인덱스 빼고, 무조건 0번 루트에서 시작함.
+		l--
 	}
 
 	return res
