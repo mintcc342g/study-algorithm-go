@@ -57,17 +57,24 @@ func TestStackPop(t *testing.T) {
 	testCases := map[string]func(t *testing.T){
 		"success": func(t *testing.T) {
 			var (
-				size     = 1
-				expected = utils.RandInt(10)
+				size     = 7
+				fixedStk = NewFixedStack(size)
+				expected = []int{}
 			)
 
-			fixedStk := NewFixedStack(size)
-			err := fixedStk.Push(expected)
-			assert.NoError(t, err)
+			for i := 0; i < size; i++ {
+				input := utils.RandInt(10)
+				expected = append(expected, input)
 
-			actual, err := fixedStk.Peek()
-			assert.NoError(t, err)
-			assert.EqualValues(t, expected, actual)
+				err := fixedStk.Push(input)
+				assert.NoError(t, err)
+			}
+
+			for i := len(expected) - 1; i >= 0; i-- {
+				actual, err := fixedStk.Pop()
+				assert.NoError(t, err)
+				assert.EqualValues(t, expected[i], actual)
+			}
 		},
 		"fail to pop": func(t *testing.T) {
 			var (
