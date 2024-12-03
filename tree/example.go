@@ -7,13 +7,13 @@ package tree
  */
 
 type MinHeap struct {
-	elements []uint32 // 얘가 사실상 우선순위 큐가 되는 것
+	elements []uint32 // 얘가 사실상 우선순위 큐가 되는 것, 이건 1-based array임.
 	size     uint32   // 힙에 원소를 넣을 수 있는 최대 사이즈
 	last     uint32   // 원소 넣을 때 가장 마지막 위치부터 검색하면서 부모로 올라가기 위해서 필요함.
 }
 
 func NewMinHeap(size uint32) *MinHeap {
-	size++ // 힙은 0-th 인덱스는 사용하지 않으니까 +1 해줌.
+	size++ // 0-th 인덱스는 사용하지 않으니까 +1 해줌.
 
 	return &MinHeap{
 		elements: make([]uint32, size),
@@ -79,6 +79,66 @@ func (h *MinHeap) Pop() uint32 {
 	}
 
 	return result
+}
+
+// recursion 사용, upHeap이랑 downHeap내의 부등호만 바꾸면 MinHeap 됨.
+type MaxHeap struct {
+	elements []int32 // 이건 0-based array임.
+}
+
+func NewMaxHeap(isMin bool) *MaxHeap {
+	return &MaxHeap{
+		elements: make([]int32, 0),
+	}
+}
+
+// 새로운 요소를 가장 마지막 자식 노드에 넣고,
+// leaf -> root 방향으로 자리를 찾아감.
+func (r *MaxHeap) Push(val int32) {
+	r.elements = append(r.elements, val)
+	r.upHeap(len(r.elements) - 1)
+}
+
+func (r *MaxHeap) upHeap(child int) {
+	parent := (child - 1) / 2
+
+	if parent >= 0 && r.elements[child] > r.elements[parent] {
+		r.elements[child], r.elements[parent] = r.elements[parent], r.elements[child]
+		r.upHeap(parent)
+	}
+}
+
+// 현재 루트를 빼내고, 가장 마지막 자식을 루트로 올린 후에,
+// root -> leaf 방향으로 자리를 찾아감.
+func (r *MaxHeap) Pop() int32 {
+	if len(r.elements) == 0 {
+		panic("heap is empty!!")
+	}
+
+	root := r.elements[0]
+	r.elements[0] = r.elements[len(r.elements)-1]
+	r.elements = r.elements[:len(r.elements)-1]
+	r.downHeap(0)
+
+	return root
+}
+
+func (r *MaxHeap) downHeap(parent int) {
+	left := parent*2 + 1
+	right := parent*2 + 2
+	largest := parent
+
+	if left < len(r.elements) && r.elements[left] > r.elements[largest] {
+		largest = left
+	}
+	if right < len(r.elements) && r.elements[right] > r.elements[largest] {
+		largest = right
+	}
+
+	if largest != parent {
+		r.elements[parent], r.elements[largest] = r.elements[largest], r.elements[parent]
+		r.downHeap(largest)
+	}
 }
 
 // leetcode: 트리를 가정한 nums 라는 배열에서 k번째로 큰 수 찾기
