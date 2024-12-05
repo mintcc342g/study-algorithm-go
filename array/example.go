@@ -30,6 +30,32 @@ func BinarySearch(sortedArray []int, value int) (int, error) {
 	return -1, errors.New("not found")
 }
 
+// leetcode
+func searchInsert(nums []int, target int) int {
+	// nums 내에서 target 을 찾아서 그 인덱스를 반환해야 함.
+	// 만약 찾지 못했을 경우엔 target을 삽입할 적절한 인덱스를 반환해야 함.
+	// 제약조건이 O(log n) 이므로, 이진 검색 해야됨.
+
+	left, right := 0, len(nums)-1
+	for left <= right {
+		mid := left + (right-left)/2
+		if nums[mid] == target {
+			return mid
+		} else if nums[mid] < target {
+			left = mid + 1
+		} else {
+			right = mid - 1
+		}
+	}
+
+	// for문 종료조건이 left > right가 됐을 때임.
+	// 즉, for문이 종료됐을 때 right는 항상 left - 1 이 됨.
+	// for문을 나왔다는 건 target이 삽입되어야 하는 위치를 찾아야 한다는 거고,
+	// left == right 인 경우가 바로 삽입해야 하는 위치임.
+	// 따라서 left를 반환하는 것
+	return left
+}
+
 /*
  ** 버블 정렬
  */

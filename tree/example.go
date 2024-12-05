@@ -108,7 +108,7 @@ func (r *MaxHeap) upHeap(child int) {
 	}
 }
 
-// 현재 루트를 빼내고, 가장 마지막 자식을 루트로 올린 후에,
+// 현재 루트를 빼내고, 가장 마지막 자식을 루트로 올린 후에 heap 크기를 줄이고,
 // root -> leaf 방향으로 자리를 찾아감.
 func (r *MaxHeap) Pop() int32 {
 	if len(r.elements) == 0 {
