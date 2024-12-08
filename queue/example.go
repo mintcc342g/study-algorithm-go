@@ -4,12 +4,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// 일반적인 배열로 만드는 큐는 복잡도가 O(n) 인데, 선입선출을 지키려고 배열 내 원소 이동이 필요하기 때문
-// 링 버퍼 큐는 배열 내 원소를 옮길 필요 없이 front와 rear 의 값만 업데이트 하여 큐를 구현하므로 복잡도가 O(1)
-// 링 버퍼는 오래된 데이터는 버리는 용도로 사용할 수 있음.
-// node 패키지에 이중 연결 리스트로 구현한 큐 예제도 있음.
-
-type FixedQueue struct {
+type FixedQueue struct { // 링 버퍼 큐
 	num      int   // 현재 데이터 개수
 	front    int   // 맨 앞 원소의 커서
 	rear     int   // 맨 뒤 원소의 커서
