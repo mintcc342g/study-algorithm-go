@@ -2,6 +2,8 @@
 
 ## Contents
 - [Basic Concepts](#basic-concepts)
+- [Ring Buffer](#ring-buffer)
+- [Priority Queue](#priority-queue)
 
 ## Basic Concepts
 - FIFO(First-In-First-Out); 선입선출 자료구조
@@ -11,9 +13,12 @@
   - `peek`: 큐의 가장 위의 항목을 반환
   - `isEmpty`: 큐 비어있는 여부 확인
 - 너비우선탐색(BFS)이나 캐시 구현할 때 종종 사용됨.
-- 링 버퍼 큐
-  - 일반적인 배열로 만드는 큐는 복잡도가 O(n) 인데, 선입선출을 지키려고 배열 내 원소 이동이 필요하기 때문
-  - 링 버퍼 큐는 배열 내 원소를 옮길 필요 없이 front와 rear 의 값만 업데이트 하여 큐를 구현하므로 복잡도가 O(1)
+
+## Ring Buffer
+  - 배열 내 원소 이동을 하지 않는 형태로 큐를 구현한 자료구조
+  - ring 이라는 이름에서 알 수 있듯, 배열의 처음과 끝이 연결되어 있다고 봄.
+  - front와 rear라는 포인터 값만 업데이트 하여 배열 요소를 관리함.
+    - 선형 배열로 큐를 만들 경우 배열 내 원소 이동 때문에 enqueue/dequeue의 시간 복잡도가 O(n)인데 반해, 링버퍼는 포인터로 요소를 관리하므로 enqueue/dequeue의 시간 복잡도가 O(1)임.
   - 링 버퍼는 오래된 데이터는 버리는 용도로 사용할 수 있음.
 
 ## Priority Queue
@@ -52,10 +57,4 @@
         - 조회: O(log n)
           - binary search tree는 자식 노드가 특정한 순서를 만족해야 함.
           - 따라서 루트 노드는 중간값이기 때문에 binary heap과 다르게 조회에 O(log n)이 걸리는 것
-    - 공간 복잡도: O(n)
-  - 피보나치 힙 (구현이 복잡해서 사용 안 함.)
-    - 시간 복잡도
-        - 삽입: O(1)
-        - 삭제: O(log n)
-        - 조회: O(1)
     - 공간 복잡도: O(n)
