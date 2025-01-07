@@ -214,6 +214,46 @@ func qselection(l []int, k int, largest bool, left, right int) int {
 	return l[pivot]
 }
 
+/*
+ ** 병합 정렬
+ */
+func mergeSort(arr []int) []int {
+	// 배열 크기가 1 이하이면 이미 정렬된 상태
+	if len(arr) <= 1 {
+		return arr
+	}
+
+	// 배열을 절반으로 나누기
+	mid := len(arr) / 2
+	left := mergeSort(arr[:mid])
+	right := mergeSort(arr[mid:])
+
+	// 나뉜 배열 병합
+	return merge(left, right)
+}
+
+func merge(left, right []int) []int {
+	result := make([]int, 0, len(left)+len(right))
+	i, j := 0, 0
+
+	// 두 배열 비교하며 작은 값을 결과에 추가
+	for i < len(left) && j < len(right) {
+		if left[i] <= right[j] {
+			result = append(result, left[i])
+			i++
+		} else {
+			result = append(result, right[j])
+			j++
+		}
+	}
+
+	// 남은 요소를 결과에 추가
+	result = append(result, left[i:]...)
+	result = append(result, right[j:]...)
+
+	return result
+}
+
 // leetcode
 func bitXOR(nums []int) {
 	// 짝수번 중복됐을 때에만 제외해줌.
