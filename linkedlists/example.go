@@ -127,6 +127,63 @@ func (l *LinkedList) ReadAll() {
 	}
 }
 
+/*
+ ** Linked List의 병합 정렬
+ */
+func mergeSort(head *Node) *Node {
+	if head == nil || head.nextNode == nil {
+		return head
+	}
+
+	// 1. 중간 노드 찾기
+	mid := findMiddle(head)
+
+	// 2. 중간을 기준으로 리스트 나누기
+	left := head
+	right := mid.nextNode
+	mid.nextNode = nil // left가 중간까지만 가도록 nil로 넣어주는 것
+
+	// 3. 두 부분 리스트를 각각 정렬
+	left = mergeSort(left)
+	right = mergeSort(right)
+
+	// 4. 정렬된 리스트를 병합
+	return mergeTwoLists(left, right)
+}
+
+func findMiddle(head *Node) *Node {
+	slow, fast := head, head
+	for fast != nil && fast.nextNode != nil {
+		slow = slow.nextNode
+		fast = fast.nextNode.nextNode
+	}
+	return slow
+}
+
+func mergeTwoLists(l1, l2 *Node) *Node {
+	dummy := &Node{}
+	curr := dummy
+
+	for l1 != nil && l2 != nil {
+		if l1.data < l2.data {
+			curr.nextNode = l1
+			l1 = l1.nextNode
+		} else {
+			curr.nextNode = l2
+			l2 = l2.nextNode
+		}
+		curr = curr.nextNode
+	}
+
+	if l1 != nil { // l1이 뒤에 더 남은 경우 붙여줌.
+		curr.nextNode = l1
+	} else { // l2가 뒤에 더 남은 경우 붙여줌.
+		curr.nextNode = l2
+	}
+
+	return dummy.nextNode
+}
+
 // 이중 연결 리스트 예제를 위한 노드
 type DoubleLinkNode struct {
 	prevNode *DoubleLinkNode

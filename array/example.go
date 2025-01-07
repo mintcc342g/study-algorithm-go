@@ -216,6 +216,7 @@ func qselection(l []int, k int, largest bool, left, right int) int {
 
 /*
  ** 병합 정렬
+ * (연결리스트 예제도 있는데, linkedlists 쪽 확인)
  */
 func mergeSort(arr []int) []int {
 	// 배열 크기가 1 이하이면 이미 정렬된 상태
