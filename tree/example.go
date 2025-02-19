@@ -1,11 +1,8 @@
 package tree
 
-/**
- * MinHeap
- * 부모 < 자식 이어야 하는 힙
- * MaxHeap은 이거 반대로만 해주면 됨.
- */
-
+// MinHeap:
+// 부모 < 자식 이어야 하는 힙.
+// MaxHeap은 이거 반대로만 해주면 됨.
 type MinHeap struct {
 	elements []uint32 // 얘가 사실상 우선순위 큐가 되는 것, 이건 1-based array임.
 	size     uint32   // 힙에 원소를 넣을 수 있는 최대 사이즈
@@ -208,4 +205,55 @@ func heapify(nums []int, low int, high int, parent int) {
 		// 따라서, 그 새로운 녀석의 자식들을 또 정렬 시키기 위해서 heapify를 재귀 호출함.
 		heapify(nums, low, high, larger)
 	}
+}
+
+// Trie(GPT 버전)
+type TrieNode struct {
+	children map[rune]*TrieNode
+	isEnd    bool
+}
+
+type Trie struct {
+	root *TrieNode
+}
+
+// Trie 생성
+func NewTrie() *Trie {
+	return &Trie{root: &TrieNode{children: make(map[rune]*TrieNode)}}
+}
+
+// 삽입 (Insert)
+func (t *Trie) Insert(word string) {
+	node := t.root
+	for _, ch := range word {
+		if _, found := node.children[ch]; !found {
+			node.children[ch] = &TrieNode{children: make(map[rune]*TrieNode)}
+		}
+		node = node.children[ch]
+	}
+	node.isEnd = true
+}
+
+// 검색 (Search)
+func (t *Trie) Search(word string) bool {
+	node := t.root
+	for _, ch := range word {
+		if _, found := node.children[ch]; !found {
+			return false
+		}
+		node = node.children[ch]
+	}
+	return node.isEnd
+}
+
+// 접두어 검색 (StartsWith)
+func (t *Trie) StartsWith(prefix string) bool {
+	node := t.root
+	for _, ch := range prefix {
+		if _, found := node.children[ch]; !found {
+			return false
+		}
+		node = node.children[ch]
+	}
+	return true
 }
