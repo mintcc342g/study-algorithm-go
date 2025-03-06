@@ -8,6 +8,11 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
 // 모든 노드값 비교해서 그 차이가 가장 작은 값을 구하는 문제.
 // inorder traversal 를 해줘야함.
 func getMinimumDifference(root *TreeNode) int {
@@ -59,11 +64,84 @@ func sbst(start, end int, nums []int) *TreeNode {
 		return nil
 	}
 
-	mid := start + (end-start)/2
+	mid := start + (end-start)/2 // 중간값 찾기
 	node := new(TreeNode)
 	node.Val = nums[mid]
-	node.Left = sbst(start, mid-1, nums)
-	node.Right = sbst(mid+1, end, nums)
+	node.Left = sbst(start, mid-1, nums) // 왼쪽 절반
+	node.Right = sbst(mid+1, end, nums)  // 오른쪽 절반
+
+	return node
+}
+
+// linked list를 bst로 만드는 문제
+// 2가지 방법이 있음.
+// 첫 번째는 two pointers 로 중간값을 찾으면서 만들어가는 방식 (O(N log N))
+// 두 번째는 linked list를 int 배열로 만든 후에 이진탐색처럼 중간값을 찾아서 만드는 방식 (O(N), 순환하는 linked list면 이 방법 x)
+func sortedListToBST(head *ListNode) *TreeNode {
+	// 첫 번째 방법
+	return sTowPointers(head)
+
+	// 두 번쨰 방법
+	// arr := []int{}
+	// for head != nil {
+	//     arr = append(arr, head.Val)
+	//     head = head.Next
+	// }
+
+	// return sbs(arr)
+}
+
+func sTowPointers(head *ListNode) *TreeNode {
+	// two pointers 방식은 2칸씩 앞으로 가는 fast 포인터와 1칸씩 앞으로 가는 slow 포인터 2개를 이용하는 것
+	// fast가 linked list의 끝에 도달했을 때, slow는 linked list의 중간 지점에 위치하게 됨.
+	// 이 때 slow가 가리키는 노드의 값을 bst의 새로운 노드에 넣어주고, 리스트를 분할해줌.
+	// 그리고 분할된 linked list의 앞부분과 뒷부분을 각각 재귀로 돌려줌.
+	// 중요한 게 재귀 종료 조건인데, 단일 노드의 경우 무한 재귀가 발생하지 않도록 next가 nil인 경우를 꼭 걸러줘야함!
+
+	if head == nil {
+		return nil
+	}
+	// 이 조건문이 없으면 head가 단일 노드인 경우 무한 재귀가 발생
+	// 왜냐면 하단에서 왼쪽 트리 만들 때 head값을 넣어주기 떄문
+	if head.Next == nil {
+		return &TreeNode{Val: head.Val}
+	}
+
+	prev, slow, fast := head, head, head
+	// slow를 중간 위치까지 옮기기
+	for fast != nil && fast.Next != nil {
+		prev = slow
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+
+	// 순환하지 못하도록 중간 노드의 메모리 주소를 변수에서 없앰.
+	// slow는 여전히 중간 노드부터의 메모리 주소를 갖고 있으므로 문제 x
+	prev.Next = nil
+
+	// 찾은 중간값을 bst에 새 노드 만들어서 넣어줌.
+	res := &TreeNode{Val: slow.Val}
+	res.Left = sTowPointers(head)       // 절반 앞 부분부터 왼쪽에 넣도록 시작점인 head를 넣어줌.
+	res.Right = sTowPointers(slow.Next) // 절반 뒷 부분은 오른쪽 트리에 넣도록 slow.Next를 넣어줌.
+
+	return res
+}
+
+func sbs(arr []int) *TreeNode {
+	// linked list를 배열로 만드는 방식은 이 문제에서 주어지는
+	// linked list가 순환하지 않기 때문에 가능한 것임.
+	// 우선 for문을 돌면서 linked list를 int 배열로 만들어줌.
+	// 이후는 bst에서 했던 것처럼 중간값을 찾아서 넣어주면 됨.
+
+	if len(arr) == 0 {
+		return nil
+	}
+
+	mid := len(arr) / 2
+	node := new(TreeNode)
+	node.Val = arr[mid]
+	node.Left = sbs(arr[:mid])
+	node.Right = sbs(arr[mid+1:])
 
 	return node
 }
