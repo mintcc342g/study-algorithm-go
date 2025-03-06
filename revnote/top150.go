@@ -2,6 +2,33 @@ package revnote
 
 import "math"
 
+/*
+ **
+ * 53. Maximum Subarray
+ * 하위 배열의 합 중에서 가장 큰 값을 찾는 문제
+ * 카데인 알고리즘
+ * max 값이랑 sum 값을 별도로 저장하면서 찾음.
+ */
+func maxSubArray(nums []int) int {
+	max, sum := nums[0], nums[0]
+	for _, n := range nums[1:] {
+		// 배열엔 마이너스 값도 들어있으므로, sum은 미리 더해줌.
+		sum += n
+
+		// 이때까지의 합보다 n이 더 크다면 n부터 새로 더하는 게 더 나음.
+		if sum < n {
+			sum = n
+		}
+
+		// 이때까지의 합과 max 비교해서 max 갱신
+		if max < sum {
+			max = sum
+		}
+	}
+
+	return max
+}
+
 type TreeNode struct {
 	Val   int
 	Left  *TreeNode
