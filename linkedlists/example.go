@@ -143,11 +143,11 @@ func mergeSort(head *Node) *Node {
 	right := mid.nextNode
 	mid.nextNode = nil // left가 중간까지만 가도록 nil로 넣어주는 것
 
-	// 3. 두 부분 리스트를 각각 정렬
+	// 3. 두 부분 리스트를 재귀로 다시 분할
 	left = mergeSort(left)
 	right = mergeSort(right)
 
-	// 4. 정렬된 리스트를 병합
+	// 4. 분할된 리스트를 정렬하면서 병합
 	return mergeTwoLists(left, right)
 }
 
