@@ -448,3 +448,67 @@ func singleNumber(nums []int) int {
 
 	return res
 }
+
+/*
+ **
+ * 198. House Robber
+ * 입력받은 배열에서 연속되지 않는 배열의 값을 더했을 때 나올 수 있는 최대값을 구하는 문제
+ */
+func rob(nums []int) int {
+	// 시작할 때 0번째 인덱스부터 더할 것인지 1번째 인덱스부터 더할 것인지는 둘의 값을 비교해서 정함.
+	// 현재 인덱스의 값을 더할지 말지를 전전인덱스의 값을 더해서 나온 값이 최대값이냐 아니냐로 결정함.
+	// 이 떄문에 반드시 한 칸은 건너뛰게 되어 있고, 계속해서 최대값을 구하기 때문에
+	// 결과적으로 최대값이 나오게 되어 있음.
+
+	n := len(nums)
+	if n == 0 {
+		return 0
+	}
+	if n == 1 {
+		return nums[0]
+	}
+
+	pprev, prev := 0, nums[0] // 이게 무조건 초기값
+	for _, num := range nums[1:] {
+		pprev, prev = prev, max(prev, pprev+num)
+	}
+
+	return prev
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+
+	return b
+}
+
+/*
+ **
+ * 198. House Robber
+ * 입력받은 배열에서 연속되지 않는 배열의 값을 더했을 때 나올 수 있는 최대값을 구하는 문제
+ * 단, 0번째 배열을 최대값을 구하는 데에 사용했을 경우 마지막 인덱스의 값은 사용해서는 안 됨.
+ */
+func rob2(nums []int) int {
+	// 주어진 배열에서 인접하지 않은 값들의 최대값을 구하는 문제
+	// 이건 0~마지막-1 또는 1~마지막까지의 합 중 큰 걸 리턴해야 함.
+	// 0번째 사용했다고 마지막 안 더하는 식으로 if문 두면 예외에 걸려서 문제가 안 풀림.
+	l := len(nums)
+	if l == 0 {
+		return 0
+	}
+	if l == 1 {
+		return nums[0]
+	}
+
+	return max(robb(nums[:l-1]), robb(nums[1:]))
+}
+
+func robb(nums []int) int {
+	pprev, prev := 0, nums[0]
+	for _, num := range nums[1:] {
+		pprev, prev = prev, max(prev, pprev+num)
+	}
+	return prev
+}
