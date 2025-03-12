@@ -1,6 +1,8 @@
 package revnote
 
-import "math"
+import (
+	"math"
+)
 
 /*
  **
@@ -510,5 +512,277 @@ func robb(nums []int) int {
 	for _, num := range nums[1:] {
 		pprev, prev = prev, max(prev, pprev+num)
 	}
+
 	return prev
+}
+
+/*
+ **
+ * 139. Word Break
+ * 입력받은 배열에 들어있는 단어만으로 특정 문자열을 만들어낼 수 있는지 알아보는 문제
+ */
+func wordBreak(s string, wordDict []string) bool {
+	// 우선 생각나는 방법은.. -> 안 됨.
+	// wordDict를 돌리면서 일단 wordDict의 단어가 s에 있는지 확인
+	// 있으면 그 부분만 제외하고 s 만들어줌. (빈칸 같은 걸로?)
+	// 이거 반복?
+	// 이후 s가 빈칸으로만 이루어졌으면 true 아니면 false
+	// 이 방법은 cars 랑 ["cars", "ca", "rs"] 왔을 때 해결 안 됨.
+
+	// 결국 배열의 모든 조합을 만들어서 일치 하냐 안 하냐를 봐야함. -> DP
+	// 하지만 모든 배열 조합을 만들면 N^2이 되니까 효율이 너무 안 좋음.
+	// 대신 코드가 좀 더 간단함.
+	return wordBreakDP(s, wordDict)
+
+	// wordDict를 트라이(Trie)로 만들어서 s를 찾아 나가는 방식으로 하면 어떨까?
+	// GPT에 의하면 문자열이 길어지는 경우에는 DP보다는 효율이 좋다는 듯?
+	// 이건 재미로 넣어봄.
+	// return wordBreakTrie(s, wordDict)
+}
+
+func wordBreakDP(s string, wordDict []string) bool {
+	// 우선 일치 여부 확인을 위한 맵 생성
+	wordset := map[string]bool{}
+	for _, word := range wordDict {
+		wordset[word] = true
+	}
+
+	// 문자열 조합 결과를 저장하기 위한 배열
+	dp := make([]bool, len(s)+1) // 0번째는 true 넣어주기 위해서 한칸 더 만듦
+	dp[0] = true                 // 이건 밑에서 for문 돌릴 때 0번째인 경우를 커버하기 위해서 넣어주는 듯?
+
+	// 이중 for문으로 모든 문자열의 조합으로 s를 만들 수 있는지 확인
+	for i := 0; i < len(s); i++ {
+		for j := 1; j < len(s); j++ {
+			// s[0:i] 까지의 조합들을 전부 찾아서 있으면 true 넣어주고 다음 글자로 넘어감.
+			// dp[j]를 체크하는 이유는 s[0:j]까지의 단어가 유효하다는 것을 확인하기 위함.
+			// 만약 worset만 갖고 확인하면, catsandog 예제처럼 catsan은 유효하지 않은데
+			// dog만 유효해서 true가 들어가게 되므로, 단어 조합이 맞는지 확인이 불가능해짐.
+			if dp[j] && wordset[s[j:i]] {
+				dp[i] = true
+				break
+			}
+		}
+	}
+
+	return dp[len(s)]
+}
+
+func wordBreakTrie(s string, wordDict []string) bool {
+	trie := NewTrie()
+	for _, word := range wordDict {
+		trie.Insert(word) // 단어 삽입
+	}
+
+	isFound := make(map[int]bool) // 중복 탐색 방지를 위한 장치
+	return trie.Search(s, 0, isFound)
+}
+
+type TrieNode struct {
+	children map[rune]*TrieNode
+	isEnd    bool
+}
+
+type Trie struct {
+	root *TrieNode
+}
+
+func NewTrie() *Trie {
+	return &Trie{
+		root: &TrieNode{
+			children: make(map[rune]*TrieNode),
+		},
+	}
+}
+
+func (r *Trie) Insert(word string) {
+	node := r.root
+	for _, w := range word {
+		// w를 가진 자식이 없으면 새로운 노드를 만들어주고 있으면 다음 노드로 넘어감.
+		if _, ok := node.children[w]; !ok {
+			node.children[w] = &TrieNode{
+				children: make(map[rune]*TrieNode),
+			}
+		}
+		node = node.children[w]
+	}
+	// 다 돌았으면 단어 다 넣은거니까 종료 표시
+	node.isEnd = true
+}
+
+func (r *Trie) Search(s string, start int, isFound map[int]bool) bool {
+	// 문자열 끝까지 도달한 경우임.
+	if start == len(s) {
+		return true
+	}
+
+	// 이미 확인을 했던 위치라서 바로 결과를 반환함.
+	if res, ok := isFound[start]; ok {
+		return res
+	}
+
+	node := r.root
+	for i := start; i < len(s); i++ {
+		// 단어찾기 시작
+		w := rune(s[i])
+		if _, ok := node.children[w]; !ok {
+			break // 더이상 일치하는 단어가 없으므로 종료
+		}
+
+		// 찾았으면 다음 노드로 넘어감
+		node = node.children[w]
+
+		// 근데 다음 노드가 끝이면
+		if node.isEnd {
+			// 다음 문자부터 다시 찾기 시작함.
+			if r.Search(s, i+1, isFound) {
+				// 다 찾았다면 start 까지는 다 검색한거니까 true 넣어주고 검색 종료해줌.
+				// true 굳이 넣어주는 건 DFS라서 다른데서 찾고 있을지도 모르니까임.
+				isFound[start] = true
+				return true
+			}
+		}
+	}
+
+	isFound[start] = false
+	return false
+}
+
+/*
+ **
+ * 322. Coin Change
+ * 주어진 배열에 있는 수들로 amount를 만들어야 함.
+ * 그 때 가장 적은 개수로 만들고 그 개수를 리턴
+ * (못 만들면 -1, amount가 0 이면 0 리턴)
+ * 배열 내 숫자 중복 사용 가능
+ */
+func coinChange(coins []int, amount int) int {
+	// coins로 amount 나올 수 있는 모든 조합을 만드는데..
+	// 중복 사용 가능한 게 문제네
+	// 문제에는 안 써있는데 coins는 오름차순으로 정렬되어서 오는 듯?
+	// 일단 큰 수부터 최대한 사용하면서 dp를 해야 하는데...?
+
+	// 여기서 dp 배열은 각 인덱스가 금액을 의미하고, 인덱스 위치의 값은 최소 동전 개수를 넣어주게 될 거임.
+	// 예를 들어, amount가 5 라면, 1~5까지의 각각의 금액을 만드는 데 대한 최소 동전 개수가 들어가게 됨.
+	dp := make([]int, amount+1)
+	for i := range dp {
+		dp[i] = amount + 1 // 여기서는 일단 현재 만들 수 없는 금액을 넣어줌. 추후에 최소값 구할 것이므로.
+	}
+	dp[0] = 0 // coin이 아무것도 사용되지 않는 경우가 있을 수 있어서 0을 넣어줌.
+
+	// 1원에서 amount까지의 각각의 금액을 만드는 데에 들어간
+	// 모든 코인의 개수(최소값)을 dp에 갱신하는 과정
+	for i := 1; i <= amount; i++ {
+		for _, coin := range coins {
+			// i보다 작거나 같을 때에만 coin이 쓰일 수 있으므로
+			// if문으로 필터링 해줌.
+			if coin <= i {
+				// i원을 만드는 데에 들어가는 모든 코인의 개수의 최소값을 구해줌.
+				// min의 왼쪽은 현재 금액 i를 만드는 데에 모든 coin들이 쓰인
+				// 총 개수를 넣어준 것. 오른쪽에는 현재 coin을 1개 쓰기 전의
+				// 금액(i-coin)을 만드는 데에 들어갔던 모든 coin들의 개수를
+				// 꺼내고, 현재 coin 1개를 썼을 때의 총 개수를 알아내기 위해서
+				// +1을 해준 것임. 그리고 그 둘을 비교해서 최소값을 현재 금액
+				// i를 만드는 데에 쓰인 모든 코인의 개수를 넣어주는 것
+				// 예를 들어, coins가 [1,2] 라고 했을 때, i값이 5원일 때
+				// coin 1이 온 경우랑 2가 온 경우의 최소값이 다를 거임. 그걸
+				// 비교한다는 것
+				dp[i] = min(dp[i], dp[i-coin]+1)
+			}
+		}
+	}
+
+	// 만약 amount를 만드는 데에 들어간 코인의 개수가 초기값과 같다면 -1 리턴
+	if dp[amount] > amount {
+		return -1
+	}
+
+	return dp[amount]
+}
+
+// 최소값 반환 함수
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+/*
+ **
+ * 300. Longest Increasing Subsequence
+ * 입력받은 배열의 숫자들의 순서를 바꾸지 않고
+ * 오름차순으로 서브 배열을 만든다고 했을 때
+ * 가장 긴 서브 배열의 길이를 리턴하는 문제
+ */
+func lengthOfLIS(nums []int) int {
+	// dp로 푸는 방법
+	// dp 배열에는 nums의 0번째부터 k번째까지 만들어질 수 있는
+	// 서브 배열의 길이를 저장하게 됨. 예를 들어, dp[3] 이라면
+	// nums의 0번째부터 2번째 인덱스까지 조합을 한 서브 배열의
+	// 길이가 들어가게 됨.
+	if len(nums) == 0 {
+		return 0
+	}
+
+	dp := make([]int, len(nums))
+	for i := range dp {
+		dp[i] = 1 // 모든 서브 배열은 길이가 최소 1개일 수 있기 때문에 1로 초기화
+	}
+
+	maxl := 1
+	// 0에서 i번째까지의 서브 배열의 길이를 저장함.
+	// 여기서 0부터 i번째까지 올려주는 게 j의 역할
+	for i := 1; i < len(nums); i++ {
+		for j := 0; j < i; j++ {
+			// i번째의 값보다 작은 값이 나왔다면 서브 배열에
+			// 포함되어야 할 것이므로 이걸 조건문으로 넣어줌.
+			if nums[j] < nums[i] {
+				// i번째까지의 서브배열의 길이를 구하는 거라서
+				// dp에 서브 배열 길이는 i번째 인덱스에 저장
+				// j번째+1을 비교대상으로 넣는 건, j번째가
+				// 이전 숫자의 이전 값이고 거기에 +1을 해주면
+				// i번째까지를 추가한 길이가 되기 때문
+				dp[i] = max(dp[i], dp[j]+1)
+			}
+		}
+		maxl = max(dp[i], maxl)
+	}
+
+	return maxl
+	// return lengthOfLISBinarySearch(nums)
+}
+
+// 이진 탐색으로 푸는 방법
+func lengthOfLISBinarySearch(nums []int) int {
+	// sub array를 만들고, nums의 각 숫자들을
+	// sub array의 적절한 위치에 bs를 통해서 나온
+	// mid값 위치에 넣어줌.
+	// 만약 mid값 위치가 sub array를 넘어간다면,
+	// sub array에 append 하게 됨.
+	sub := []int{}
+	for _, num := range nums {
+		idx := binarySearch(sub, num)
+		if idx == len(sub) {
+			sub = append(sub, num)
+		} else {
+			sub[idx] = num
+		}
+	}
+
+	return len(sub)
+}
+
+func binarySearch(sub []int, target int) int {
+	left, right := 0, len(sub)
+	for left < right {
+		mid := left + (right-left)/2
+		if sub[mid] >= target {
+			right = mid
+		} else {
+			left = mid + 1
+		}
+	}
+
+	return left
 }
