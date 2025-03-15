@@ -541,26 +541,32 @@ func wordBreak(s string, wordDict []string) bool {
 }
 
 func wordBreakDP(s string, wordDict []string) bool {
+	// dp로 푸는 경우, s의 0번째부터 n번째까지의 모든 글자가 wordDict에 들어있는지 확인해야 함.
+	// dp 배열은 boolean 배열이고, 인덱스는 글자 s를 이루는 자소의 위치 인덱스임.
+	// 예를 들어, s가 leetcode라면, l은 0번째 e는 1번째 라는 뜻
+	// 또, wordDict의 각 word가 s에 쓰였는지 알기 위해서 map도 필요함.
+
 	// 우선 일치 여부 확인을 위한 맵 생성
 	wordset := map[string]bool{}
 	for _, word := range wordDict {
 		wordset[word] = true
 	}
 
-	// 문자열 조합 결과를 저장하기 위한 배열
-	dp := make([]bool, len(s)+1) // 0번째는 true 넣어주기 위해서 한칸 더 만듦
-	dp[0] = true                 // 이건 밑에서 for문 돌릴 때 0번째인 경우를 커버하기 위해서 넣어주는 듯?
+	dp := make([]bool, len(s)+1)
+	// dp 는 s를 이루는 각 자소들이 쓰였는지 확인하는 거잖음? 따라서 끝까지
+	// dp의 모든 결과가 true로 저장되어야 해서 0번째도 true로 넣어주는 것
+	dp[0] = true
 
 	// 이중 for문으로 모든 문자열의 조합으로 s를 만들 수 있는지 확인
-	for i := 0; i < len(s); i++ {
-		for j := 1; j < len(s); j++ {
+	for i := 1; i <= len(s); i++ {
+		for j := 0; j < i; j++ {
 			// s[0:i] 까지의 조합들을 전부 찾아서 있으면 true 넣어주고 다음 글자로 넘어감.
 			// dp[j]를 체크하는 이유는 s[0:j]까지의 단어가 유효하다는 것을 확인하기 위함.
 			// 만약 worset만 갖고 확인하면, catsandog 예제처럼 catsan은 유효하지 않은데
 			// dog만 유효해서 true가 들어가게 되므로, 단어 조합이 맞는지 확인이 불가능해짐.
 			if dp[j] && wordset[s[j:i]] {
 				dp[i] = true
-				break
+				break // 이미 글자를 찾았으므로 굳이 for문을 더 돌리지 않고 끝냄.
 			}
 		}
 	}
@@ -672,22 +678,21 @@ func coinChange(coins []int, amount int) int {
 
 	// 1원에서 amount까지의 각각의 금액을 만드는 데에 들어간
 	// 모든 코인의 개수(최소값)을 dp에 갱신하는 과정
-	for i := 1; i <= amount; i++ {
+	for won := 1; won <= amount; won++ {
 		for _, coin := range coins {
-			// i보다 작거나 같을 때에만 coin이 쓰일 수 있으므로
-			// if문으로 필터링 해줌.
-			if coin <= i {
-				// i원을 만드는 데에 들어가는 모든 코인의 개수의 최소값을 구해줌.
-				// min의 왼쪽은 현재 금액 i를 만드는 데에 모든 coin들이 쓰인
-				// 총 개수를 넣어준 것. 오른쪽에는 현재 coin을 1개 쓰기 전의
-				// 금액(i-coin)을 만드는 데에 들어갔던 모든 coin들의 개수를
+			// n원보다 작거나 같을 때에만 coin이 쓰일 수 있으므로 if문으로 필터링 해줌.
+			if coin <= won {
+				// n원을 만드는 데에 들어가는 모든 코인의 개수의 최소값을 구해줌.
+				// min의 왼쪽은 현재 금액 n원을 만드는 데에 이때까지 모든 coin들이
+				// 쓰인 총 개수를 넣어준 것. 오른쪽에는 현재 coin을 1개 쓰기 전의
+				// 금액(won-coin)을 만드는 데에 들어갔던 모든 coin들의 개수를
 				// 꺼내고, 현재 coin 1개를 썼을 때의 총 개수를 알아내기 위해서
 				// +1을 해준 것임. 그리고 그 둘을 비교해서 최소값을 현재 금액
-				// i를 만드는 데에 쓰인 모든 코인의 개수를 넣어주는 것
-				// 예를 들어, coins가 [1,2] 라고 했을 때, i값이 5원일 때
+				// n원을 만드는 데에 쓰인 모든 코인의 개수를 넣어주는 것
+				// 예를 들어, coins가 [1,2] 라고 했을 때, n원이 5원일 때
 				// coin 1이 온 경우랑 2가 온 경우의 최소값이 다를 거임. 그걸
 				// 비교한다는 것
-				dp[i] = min(dp[i], dp[i-coin]+1)
+				dp[won] = min(dp[won], dp[won-coin]+1)
 			}
 		}
 	}
@@ -760,6 +765,7 @@ func lengthOfLISBinarySearch(nums []int) int {
 	// mid값 위치에 넣어줌.
 	// 만약 mid값 위치가 sub array를 넘어간다면,
 	// sub array에 append 하게 됨.
+	// 또 관건은 bs를 어떻게 구성하느냐에 있음.
 	sub := []int{}
 	for _, num := range nums {
 		idx := binarySearch(sub, num)
@@ -775,8 +781,14 @@ func lengthOfLISBinarySearch(nums []int) int {
 
 func binarySearch(sub []int, target int) int {
 	left, right := 0, len(sub)
+
 	for left < right {
 		mid := left + (right-left)/2
+
+		// 가장 왼쪽에 들어갈 자리를 찾아야 하기 때문에 반환값이 left가 되어야 함.
+		// 또, for 루프 종료 조건이 left < right 이기 때문에 right를 mid가
+		// 들어올 경우로 잡고 left를 mid + 1로 해줌.
+		// 근데 만약 종료 조건이 left <= right 라면 right = mid - 1로 해야 함.
 		if sub[mid] >= target {
 			right = mid
 		} else {
@@ -785,4 +797,101 @@ func binarySearch(sub []int, target int) int {
 	}
 
 	return left
+}
+
+/*
+ **
+ * 207. Course Schedule
+ * 모든 수업을 들을 수 있다면 true, 아니면 false를 리턴
+ */
+func canFinish(numCourses int, prerequisites [][]int) bool {
+	// 그래프 문제로, topological sort를 사용해야 함.
+	// topological sort 사용 시, 순환이 없다면 모든 노드를
+	// 방문하게 되고, 순환이 있다면 모든 노드를 방문하지 못함.
+
+	// topological sort를 위해 그래프 생성
+	// 어떤 수업을 듣기 위해서는 어떤 선행수업을 들어야 하는지를 알아야 함.
+	// 즉, 순서가 선행수업을 들을 후에 다른 수업을 듣는 것이기 때문에 그래프의 방향 또한 '선행수업 -> 수업'이 되어야 함.
+	// 그래서 그래프의 key는 선행수업, value는 연결된 다른 수업들이 됨.
+	graph := make([][]int, numCourses)
+	// 큐를 사용해서 풀건데, 그러면 진입차수(in-degree)를 알아야 함.
+	// 따라서 각 수업의 in-degree를 저장하는 배열을 만들어줌.
+	// 위에서 그래프 방향이 선행수업->수업이었으므로, 들어오는 간선을 나타내는
+	// in-degree는 key는 수업, value는 연결된 간선 개수로 만들어져야 함.
+	indegree := make([]int, numCourses)
+
+	for _, courses := range prerequisites {
+		course, prereq := courses[0], courses[1]
+		graph[prereq] = append(graph[prereq], course) // preeq -> course 그래프 생성
+		indegree[course]++                            // key는 수업, value는 course 한테 들어오는 간선 개수
+	}
+
+	q := []int{} // 현재 in-degree가 0인 노드(수업)을 저장하기 위한 큐
+	for course := 0; course < numCourses; course++ {
+		if indegree[course] == 0 {
+			q = append(q, course)
+		}
+	}
+
+	visited := 0 // 모든 노드를 방문했다면 numCourses와 같아질 것
+	for len(q) > 0 {
+		course := q[0]
+		q = q[1:] // 간선 0인 노드를 큐에서 제거
+		visited++ // 해당 노드는 방문했으므로 방문++ 해줌
+
+		// 해당 노드를 제거했으므로, 그 노드랑 연결된 다른 노드들의 간선을 줄여줌.
+		for _, neighbor := range graph[course] {
+			indegree[neighbor]--
+			if indegree[neighbor] == 0 { // 만약 노드가 간선 0 됐으면 큐에 추가해줌.
+				q = append(q, neighbor)
+			}
+		}
+	}
+
+	return visited == numCourses
+}
+
+/*
+ **
+ * 210. Course Schedule II
+ * 그래프를 topological sort로 푸는 문제
+ * 원리는 207 문제와 같음.
+ */
+func findOrder(numCourses int, prerequisites [][]int) []int {
+	// 그래프 생성
+	// 큐를 이용할 것이므로 in-degree 생성
+	graph := make([][]int, numCourses)  // key는 선행수업, value는 그 선행수업을 필요로 하는 다른 수업들
+	indegree := make([]int, numCourses) // key는 수업, value는 간선 개수
+	for _, courses := range prerequisites {
+		course, prereq := courses[0], courses[1]
+		graph[prereq] = append(graph[prereq], course)
+		indegree[course]++
+	}
+
+	q := []int{} // in-degree가 0인 노드들 넣을 큐
+	for course := 0; course < numCourses; course++ {
+		if indegree[course] == 0 {
+			q = append(q, course)
+		}
+	}
+
+	// 이번엔 리턴값이 topological sort를 한 큐가 되어야 함.
+	// 따라서 큐에서 노드를 제거하면 안 되고, in-degree가 0이 된 노드들을 계속 붙여줘야 함.
+	for i := 0; i < len(q); i++ {
+		course := q[i]
+		for _, neighbor := range graph[course] {
+			indegree[neighbor]--
+			if indegree[neighbor] == 0 {
+				q = append(q, neighbor)
+			}
+		}
+	}
+
+	// 총 수업 개수와 같다면 전부 순환한 것이므로 큐를 리턴
+	if len(q) == numCourses {
+		return q
+	}
+
+	// 아니면 전부 순환한 것이 아니기 때문에 빈배열 리턴
+	return []int{}
 }
