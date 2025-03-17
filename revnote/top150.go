@@ -895,3 +895,78 @@ func findOrder(numCourses int, prerequisites [][]int) []int {
 	// 아니면 전부 순환한 것이 아니기 때문에 빈배열 리턴
 	return []int{}
 }
+
+/*
+ **
+ * 399. Evaluate Division
+ * 그래프 + dfs
+ */
+func calcEquation(equations [][]string, values []float64, queries [][]string) []float64 {
+	// equations에 배수를 표현하는 글자들이 들어있음.
+	// 배수값은 values에 있음.
+	// 예를 들어, equations에 [a, b] 가 있고, values[0]에 2.0이 있다 치자
+	// 그러면 a / b = 2.0 이며, a가 b보다 2배 더 크다는 걸 알려주는 거임.
+	// queries에 배수를 표현하는 글자들이 들어있고, 이 글자들의 배수를 알려주는 배열을 만들어서 리턴해야 함.
+	// queries에 있는 글자들은 equations에 있을 수 있으므로 그걸 참고해서 유추해내야 함.
+	// 즉, equations의 배수를 나타내는 values 같은 걸 만들어서 리턴하라는 것
+
+	// 그래프로 풀어야 함.
+	// equations나 queries에 들어있는 글자들을 노드로 생각
+	// a / b = 2.0 이라면, a -> b 의 가중치가 2 이며, b -> a의 가중치는 0.5 가 됨.
+	// 여기서 만약 b / c = 3.0 이라면, b -> c 가중치는 3이고, c -> b 가중치난 1/3이 됨.
+	// 그러면 a -> c 가중치가 a -> b -> c 에서 나오게 되는 거고, 가중치는 배수를 말하는 거니까
+	// 2 * 3 = 6 이 되어야 함.
+	// 따라서, equations에 들어있는 모든 노드들에 대해서 values의 가중치를 갖는 그래프를 만들어줌.
+	// 그리고 그 그래프에 queries를 넣어서 dfs 탐색을 시켜서 답을 얻어내야 함.
+
+	// dfs 탐색은 그래프 g에서 두 문자열 x와 y를 모두 못 찾았을 땐 -1, 둘 다 찾았을 땐 걔네의 가중치,
+	// 대부분의 경우는 x -> k -> y 경로로 찾고, g[x][k] * dfs(k, y) 값을 리턴함.
+	// 방문 여부 확인은 출발지인 x에 대해서만 해줌. 목표는 y로 가는 것이기 때문에 y를 방문했다고 표시하지 않는 것
+
+	// 그래프 만듦
+	g := make(map[string]map[string]float64)
+	for i, nodes := range equations {
+		a, b := nodes[0], nodes[1]
+		if g[a] == nil {
+			g[a] = make(map[string]float64)
+		}
+		if g[b] == nil {
+			g[b] = make(map[string]float64)
+		}
+
+		g[a][b] = values[i]
+		g[b][a] = 1 / values[i]
+	}
+
+	res := make([]float64, 0, len(queries))
+	for _, nodes := range queries {
+		visited := map[string]bool{}
+		res = append(res, dfs(nodes[0], nodes[1], g, visited))
+	}
+
+	return res
+}
+
+func dfs(x, y string, g map[string]map[string]float64, visited map[string]bool) float64 {
+	_, okx := g[x]
+	_, oky := g[y]
+	if !okx || !oky {
+		return -1.0
+	}
+
+	if val, ok := g[x][y]; ok {
+		return val
+	}
+
+	visited[x] = true
+	for k := range g[x] {
+		if !visited[k] {
+			val := dfs(k, y, g, visited)
+			if val != -1.0 {
+				return g[x][k] * val
+			}
+		}
+	}
+
+	return -1.0
+}
