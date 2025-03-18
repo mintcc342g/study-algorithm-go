@@ -970,3 +970,118 @@ func dfs(x, y string, g map[string]map[string]float64, visited map[string]bool) 
 
 	return -1.0
 }
+
+/*
+ **
+ * 909. Snakes and Ladders
+ * 주어진 2차원 배열의 최적 경로 찾기
+ */
+func snakesAndLadders(board [][]int) int {
+	// board[][] 로 n * n 보드임.
+	// board 값은 대부분 -1 인데, 일부 양수값이 들어있는 경우가 있음.
+	// 이 양수값은 해당 칸으로 이동하라는 지시임. (snake 또는 ladder)
+	// 만약 3 * 3 보드가 주어졌고 board[0][3]에 값 9가 들어있다 치자.
+	// 1~6짜리 주사위를 던졌을 때 3이 나왔다면, 3번째 칸에서 바로 9번째 칸으로 이동하면 됨.
+	// 근데 이런 이동은 딱 1번밖에 못함.
+	// 리턴해야 하는 값은 마지막 칸까지 도달하는 데에 최소한으로 굴린 주사위 횟수임.
+	// 즉, 그래프에서 최단 경로 찾는 거임.
+
+	// 그래프 최단 경로는 bfs
+	// 주사위를 굴렸을 때 나온 숫자를 n * n 보드 좌표로 변환하는 함수가 필요 (이건 공식)
+	// 주사위를 1~6까지 전부 굴렸을 때 이동하게 될 위치를 큐에 저장
+	// 해당 위치와 그 위치까지 이동하는 데에 들어간 횟수를 별도로 저장
+	// 그리고 마지막 칸의 값을 리턴해줌.
+
+	n := len(board)
+	q := []int{1}
+	visited := map[int]int{1: 0}
+	for len(q) > 0 {
+		curr := q[0]
+		q = q[1:]
+
+		if curr == n*n {
+			return visited[curr] // 이 값은 밑에서 주사위 굴리면서 계속 쌓여온 값임.
+		}
+
+		// 1~6 주사위를 굴려서 현재 위치에 더해서 이동함.
+		// 주사위는 1~6 전부를 던지는데, 여기서는 min 으로 보드 크기 넘어가지 않도록 막아줌. (이거 대신 그냥 if문으로 막아도 됨.)
+		for move := curr + 1; move <= min(curr+6, n*n); move++ {
+			x, y := getcoord(move, n)
+
+			next := move
+			if board[x][y] != -1 {
+				next = board[x][y] // 사다리 또는 뱀인 경우 바로 그 칸으로 가줌
+			}
+			if _, ok := visited[next]; !ok {
+				q = append(q, next)
+				visited[next] = visited[curr] + 1 // next까지의 주사위 던진 횟수 계산
+			}
+		}
+	}
+
+	return -1
+}
+
+func getcoord(cell, n int) (int, int) {
+	row := (cell - 1) / n
+	col := (cell - 1) % n
+	if row%2 == 1 { // 보스트로피돈 스타일이라서 짝수행은 좌->우, 홀수 행은 우->좌 라서 이걸 해줌.
+		col = n - 1 - col
+	}
+	return n - 1 - row, col
+}
+
+/*
+ **
+ * 433. Minimum Genetic Mutation
+ * 주어진 문자열을 바꾸는 데에 들어가는 최소 횟수 찾기
+ */
+func minMutation(startGene string, endGene string, bank []string) int {
+	// A,C,G,T의 4개 글자로 이루어진 8개 길이의 문자열 startGene과 endGene이 있음.
+	// startGene -> endGene 문자열로 바꿔야 하는데, 한 번에 1글자만 바꿀 수 있음.
+	// 그렇게 바꾸는 과정에서 생겨나는 문자들은 bank에 포함되어 있어야 하고, 결과값인 endGene도 bank에 있어야 함.
+	// 예를 들어 stastartGene = "AACCGGTT", endGene = "AAACGGTA", bank = ["AACCGGTA","AACCGCTA","AAACGGTA"] 이라면,
+	// AACGGTT -> AACCGGTA -> AAACGGTA 이렇게 바뀌는 것이 조건에 맞고 최소 횟수로 바꿀 수 있음.
+
+	// 최단 경로 문제는 그래프 + bfs 이용
+	// startGene의 모든 글자들을 하나씩 바꾸면서 bank에 있는지 확인
+	// 있으면 큐에 추가하고, 방문한 것으로 표시
+	// 해당 문자열(=레벨)에 대한 탐색을 끝냈으므로, 결과값+1 해줌
+	// 큐에 담긴 그 다음 문자열을 빼서 위 과정을 반복
+	// 레벨 순으로 탐색하게 되기 때문에 결과적으로 endGene에 가장 먼저 도달한 경로의 레벨이 결과값으로 나오게 됨.
+
+	q := []string{}              // 문자열을 저장할 큐
+	visited := map[string]bool{} // 방문한 곳 필터링
+	bankset := map[string]bool{}
+
+	q = append(q, startGene)
+	visited[startGene] = true
+	for _, w := range bank {
+		bankset[w] = true
+	}
+
+	level := 0
+	for len(q) > 0 {
+		size := len(q)              // 현재 레벨에서만의 탐색을 진행하기 위해서 for문을 제한해줌.
+		for i := 0; i < size; i++ { // 제한 안 하면 다음 레벨의 노드가 담겨서 탐색이 될 거라서 반드시 제한해야 함.
+			curr := q[0]
+			q = q[1:]
+			if curr == endGene { // 찾았으면 현재 레벨 리턴. bfs라서 최단 거리를 찾게 됨.
+				return level
+			}
+
+			for _, gene := range []string{"A", "C", "G", "T"} {
+				for j := 0; j < 8; j++ { // 어차피 8글자 제한이므로.. len(curr) 해도 문제x
+					mutation := curr[:j] + gene + curr[j+1:]     // 한 글자씩 바꿔서 mutation 만들어줌
+					if !visited[mutation] && bankset[mutation] { // 방문 안 했고, bank에 있다면..
+						q = append(q, mutation)  // 큐에도 추가해주고
+						visited[mutation] = true // 방문 표시해줌
+					}
+				}
+			}
+		}
+		level++ // 이번 레벨에서의 탐색이 종료됐으므로 +1 해줌
+	}
+
+	return -1 // 못 찾았음.
+}
