@@ -45,44 +45,42 @@ type ListNode struct {
 /*
  **
  * 530. Minimum Absolute Difference in BST
- * 모든 노드값 비교해서 그 차이가 가장 작은 값을 구하는 문제.
- * inorder traversal 를 해줘야함.
+ * BST 내의 두 노드 간의 차이가 가장 작은 거 찾는 문제
  */
 func getMinimumDifference(root *TreeNode) int {
-	// 글로벌 변수 2개 필요(최소값, 이전 노드값)
-	min := math.MaxInt64 // 비교를 시작해야 하므로, 발생할 수 있는 최대 차이값으로 초기화
-	prev := -1           // 이전 노드에 없을법한 값으로 초기화
+	// BST는 중위순회를 하면 오름차순 순으로 돌게 되니까 그 순서대로 비교를 해줘야 함.
+	// 예를 들어, 이런 트리라면,
+	//     5
+	//    / \
+	//   3   8
+	//  / \   \
+	// 1   4   10
+	// 중위 순회는 [1, 3, 4, 5, 8, 10] 이렇게 됨.
+	// 따라서, 현재 노드 - 이전 노드 = 최소값 식으로 비교를 하면서 구해야 함.
 
-	// 2개 글로벌 변수 다루는 게 귀찮으니까 순회하는 함수도 걍 변수로 선언
-	// inorder traversal은 왼쪽 -> 부모 -> 오른쪽 순서
-	// 	    4
-	// 	   / \
-	//    2   6
-	//   / \   \
-	//  1   3   8
-	// 이런 트리라면, 1->2->3->4->6->8 이 순서로 방문한다는 것
-	var traverse func(node *TreeNode)
-	traverse = func(node *TreeNode) {
-		if node == nil { // 중료조건
+	var (
+		prev    *TreeNode
+		res     = math.MaxInt64
+		inorder func(root *TreeNode)
+	)
+	inorder = func(node *TreeNode) {
+		if node == nil {
 			return
 		}
 
-		traverse(node.Left) // 왼쪽부터 순회
+		inorder(node.Left)
 
-		// inorder traversal을 할 경우, 오름차순으로 정렬된 순서로 순회를 하게 됨.
-		// 따라서, 항상 prev <= node.Val 이 됨.
-		curr := node.Val - prev
-		if prev != -1 && curr < min {
-			min = curr // 조건에 따라 현재 노드를 비교한 최소값으로 갱신
+		if prev != nil {
+			res = min(res, node.Val-prev.Val)
 		}
-		prev = node.Val // 다음 노드를 가야하므로 이전 노드값을 갱신해줌.
+		prev = node
 
-		traverse(node.Right) // 오른쪽 순회
+		inorder(node.Right)
 	}
 
-	traverse(root) // 순회 시작
+	inorder(root)
 
-	return min
+	return res
 }
 
 /*
@@ -1084,4 +1082,84 @@ func minMutation(startGene string, endGene string, bank []string) int {
 	}
 
 	return -1 // 못 찾았음.
+}
+
+/*
+ **
+ * 230. Kth Smallest Element in a BST
+ * 주어진 BST의 k번째 작은 수 찾기
+ */
+func kthSmallest(root *TreeNode, k int) int {
+	// BST의 경우, 중위순회를 하면 오름차순 정렬된 리스트를 얻을 수 있음.
+	// 중위순회: 왼 -> 부 -> 오
+
+	var (
+		inorder func(node *TreeNode)
+		res     int
+	)
+	inorder = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+
+		inorder(node.Left)
+
+		k--
+		if k == 0 {
+			res = node.Val
+			return
+		}
+
+		inorder(node.Right)
+	}
+
+	inorder(root)
+
+	return res
+}
+
+/**
+ * 98. Validate Binary Search Tree
+ * BST인지 확인하는 문제
+ */
+func isValidBST(root *TreeNode) bool {
+	// BST는 왼<부<오 규칙을 만족해야 함.
+	// 또 모든 서브트리에서 만족해야 하기 때문에,
+	// 단순히 현재 레벨의 부모노드의 값만으로 확인하는 방법으로는 안 풀림.
+	// 따라서, 이전 부모 노드로 최소값, 최대값 범위를 한정해줘야 함.
+	return validate(root, math.MinInt64, math.MaxInt64)
+}
+
+func validate(root *TreeNode, min, max int) bool {
+	if root == nil {
+		return true
+	}
+
+	if root.Val <= min || max <= root.Val {
+		return false
+	}
+
+	return validate(root.Left, min, root.Val) && validate(root.Right, root.Val, max)
+}
+
+/**
+ * 153. Find Minimum in Rotated Sorted Array
+ */
+func findMin(nums []int) int {
+	// 문제 설명이 복잡한데, 결국에는 nums내에 있는 최소값 찾아내라는 문제임.
+
+	left, right := 0, len(nums)-1
+	for left < right {
+		mid := left + (right-left)/2
+
+		// 이 조건이 중요. right만 걸러내는 걸 써줘야 문제가 풀림.
+		// mid 값이 최소값일 경우가 있을 수 있어서 그런 듯
+		if nums[mid] > nums[right] {
+			left = mid + 1
+		} else {
+			right = mid
+		}
+	}
+
+	return nums[left]
 }
