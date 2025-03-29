@@ -1163,3 +1163,44 @@ func findMin(nums []int) int {
 
 	return nums[left]
 }
+
+/**
+ * 34. Find First and Last Position of Element in Sorted Array
+ */
+func searchRange(nums []int, target int) []int {
+	// nums는 오름차순으로 오고, 거기서 target 찾음.
+	// targer이 나왔던 가장 첫 번째 인덱스랑, 가장 마지막 인덱스를 리턴
+	// 그럼 그냥 for문 돌면서 인덱스 쭉 추가해주고 0 이랑 len-1 넣어서 리턴해주면 되는 거 아닌가
+	// 근데 요구사항이 log n임. -> 이진탐색 2번 사용(한 번은 왼쪽, 한 번은 오른쪽)
+	// target을 찾은 순간이 아니라, 그 target의 인덱스가 기존보다 더 작은/큰 것이어야 함.
+
+	left, right, min, max := 0, len(nums)-1, -1, -1
+	for left <= right { // 왼쪽 찾기
+		mid := left + (right-left)/2
+		if nums[mid] >= target { // target의 시작 위치를 찾기 위해서 == 인 경우도 포함시켜서 인덱스를 계속 줄여감
+			right = mid - 1
+		} else {
+			left = mid + 1
+		}
+
+		if nums[mid] == target { // 값이 같을 때에만 min 갱신
+			min = mid // 어차피 오름차순 배열이라 크고 작은 걸 비교할 필요가 없음.
+		}
+	}
+
+	left, right = 0, len(nums)-1
+	for left <= right { // 오른쪽 찾기
+		mid := left + (right-left)/2
+		if nums[mid] <= target {
+			left = mid + 1
+		} else {
+			right = mid - 1
+		}
+
+		if nums[mid] == target {
+			max = mid
+		}
+	}
+
+	return []int{min, max}
+}
