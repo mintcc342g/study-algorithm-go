@@ -350,7 +350,7 @@ func kSmallestPairs(nums1 []int, nums2 []int, k int) [][]int {
 		p := heap.Pop()
 		ret = append(ret, []int{nums1[p.i], nums2[p.j]})
 
-		if p.j+1 < len(nums2) {
+		if p.j+1 < len(nums2) { // 만약에 nums2에 j+1번째가 존재하면 heap에 넣어줌.
 			heap.Push(Pair{sum: nums1[p.i] + nums2[p.j+1], i: p.i, j: p.j + 1})
 		}
 
@@ -380,6 +380,8 @@ func (r *MinHeap) Push(p Pair) {
 	r.upHeap(len(r.pairs) - 1)
 }
 
+// 데이터 삽입 시에 사용
+// 현재 부모노드의 값 > 자식노드의 값인 경우, leaf -> root 순으로 자리를 찾아감.
 func (r *MinHeap) upHeap(child int) {
 	parent := (child - 1) / 2 // 부모 찾는 공식
 	if parent >= 0 && r.pairs[parent].sum > r.pairs[child].sum {
