@@ -125,7 +125,7 @@ func InsertionSort(l []int) []int {
  ** 퀵 정렬
  */
 
-func QuickSort(l []int, desc bool) []int {
+func quickSort(l []int, desc bool) []int {
 	return qsort(l, 0, len(l)-1, desc)
 }
 
@@ -266,4 +266,91 @@ func bitXOR(nums []int) {
 	}
 
 	println("\nbit XOR :", res)
+}
+
+// 퀵 정렬, 퀵 셀렉트
+type SortableArray struct {
+	arr []int
+}
+
+func NewSortableArray(arr []int) *SortableArray {
+	return &SortableArray{
+		arr: arr,
+	}
+}
+
+func (s *SortableArray) partition(leftPtr, rightPtr int) int {
+	pivot := rightPtr // 항상 오른쪽에 있는 값을 피벗으로 선정
+	pivotVal := s.arr[pivot]
+
+	rightPtr = pivot - 1 // 피벗의 바로 왼쪽 인덱스가 오른쪽 포인터의 시작점
+
+	for {
+		for s.arr[leftPtr] < pivotVal { // 왼쪽 포인터의 이동
+			leftPtr += 1
+		}
+		for s.arr[rightPtr] > pivotVal { // 오른쪽 포인터의 이동
+			rightPtr -= 1
+		}
+
+		if leftPtr >= rightPtr { // 왼쪽 포인터와 오른쪽 포인터의 위치가 같거나,
+			break // 왼쪽 포인터가 오른쪽 포인터의 위치를 넘어섰으면 분할 중지
+		}
+
+		s.swap(leftPtr, rightPtr) // 두 포인터의 이동이 멈췄다면, 두 포인터가 가리키는 값을 교환함.
+	}
+
+	// 분할 과정이 끝났다면, 왼쪽 포인터의 값과 피벗 값을 교환함.
+	s.swap(leftPtr, pivot)
+
+	return leftPtr // 이건 예제의 quickSort 메서드를 위해서 왼쪽 포인터 반환하는 것
+}
+
+func (s *SortableArray) swap(fstIdx, sndIdx int) {
+	s.arr[fstIdx], s.arr[sndIdx] = s.arr[sndIdx], s.arr[fstIdx]
+}
+
+// 퀵 정렬을 재귀로 구현
+func (s *SortableArray) quickSort(leftIdx, rightIdx int) {
+	// 기저 조건은 하위 배열의 원소가 0~1개 일 때
+	if rightIdx-leftIdx <= 0 {
+		return
+	}
+
+	// 배열을 분할하고 피벗 위치를 가져옴.
+	// partition 은 분할을 끝낸 배열의 왼쪽 포인터를 반환하는데,
+	// 분할이 끝난 배열의 왼쪽 포인터는 해당 배열의 맨 오른쪽 값을 가리키고 있을 것이기 때문임.
+	pivot := s.partition(leftIdx, rightIdx)
+
+	// 피벗의 왼쪽 배열에 대한 퀵 정렬
+	// 이 하위 배열의 오른쪽 포인터는 피벗의 한 칸 왼쪽에서 시작되어야 하므로 pivot -1
+	s.quickSort(leftIdx, pivot-1)
+
+	// 피벗의 오른쪽에 대한 퀵 정렬
+	// 이 하위 배열의 왼쪽 포인터는 피벗의 한 칸 오른쪽에서 시작되어야 하므로 pivot + 1
+	s.quickSort(pivot+1, rightIdx)
+}
+
+// 퀵 셀렉션 구현
+// 정렬되지 않은 배열에서 n번째로 작은 값을 찾음. (n은 0부터 시작)
+func (s *SortableArray) quickSelectLowest(nth, leftIdx, rightIdx int) int {
+	// 기저 조건은 하위 배열의 원소가 1개가 됐을 때
+	if rightIdx-leftIdx <= 0 {
+		return s.arr[leftIdx]
+	}
+
+	// 배열을 분할하고 피벗 위치를 가져옴.
+	// 퀵 셀렉션도 분할을 기반으로 하니까 똑같이 partition 이용해줌.
+	pivot := s.partition(leftIdx, rightIdx)
+
+	if nth < pivot { // 찾고자 하는 값의 순위가 피벗 기준 왼쪽에 있다면
+		s.quickSelectLowest(nth, leftIdx, pivot-1) // 왼쪽 재귀 분할 시작
+	} else if nth > pivot { // 오른쪽일 경우
+		s.quickSelectLowest(nth, pivot+1, rightIdx) // 오른쪽 재귀 분할 시작
+	}
+
+	// 책에서는 찾고자 하는 값의 인덱스 == pivot 이라면서
+	// s.arr[pivot] 하면 된다는데, 실제로 해보면 그렇지 않음.
+	// 추측컨대, partion 을 한 번 더 해야 하는데 못해서 그러는 게 아닌가 싶기도..?
+	return s.arr[nth]
 }

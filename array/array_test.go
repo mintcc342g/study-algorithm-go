@@ -95,7 +95,7 @@ func TestQuickSort(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.scenario, func(t *testing.T) {
-			assert.EqualValues(t, tc.expected, QuickSort(tc.l, tc.desc))
+			assert.EqualValues(t, tc.expected, quickSort(tc.l, tc.desc))
 		})
 	}
 }
