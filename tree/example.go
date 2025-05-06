@@ -1,5 +1,7 @@
 package tree
 
+import "fmt"
+
 // MinHeap:
 // 부모 < 자식 이어야 하는 힙.
 // MaxHeap은 이거 반대로만 해주면 됨.
@@ -256,4 +258,160 @@ func (t *Trie) StartsWith(prefix string) bool {
 		node = node.children[ch]
 	}
 	return true
+}
+
+/*
+ **
+ * Tree: Huffman Decoding (해커랭크)
+ * Huffman Tree란, 트리의 일종으로, 마지막 노드에만 문자가 있고
+ * 그 문자에 도달하기 전까지의 노드는 문자를 갖지 않고 빈도수만 가짐.
+ * 그리고 그 마지막 노드에 도달하기 까지의 경로를 0과 1로만 나타냄.
+ */
+func huffmanCoding() {
+	//Enter your code here. Read input from STDIN. Print output to STDOUT
+	var s string
+	fmt.Scan(&s) // ABCAABARD
+
+	// 문자열 내의 자소의 빈도수를 알아내기 위한 맵 구성
+	m := map[rune]int{}
+	for _, r := range s {
+		m[r]++
+	}
+
+	// 일단 빈도수에 따라서 min heap을 만들어줌.
+	// 이때는 아직 트리 간의 포인터가 연결 안 된 상태
+	h := &MinHeapHuff{}
+	for chara, freq := range m {
+		h.Push(&NodeHuff{
+			freq:  freq,
+			chara: chara,
+		})
+	}
+
+	// huffman tree 만들기
+	for len(h.data) > 1 {
+		// 1. 힙에서 2개 노드를 뺌
+		left := h.Pop()
+		right := h.Pop()
+
+		// 2. 두 노드를 병합해줌
+		// 이 때 트리 간에 연결을 해주는 것
+		merged := &NodeHuff{
+			freq:  left.freq + right.freq,
+			left:  left,
+			right: right,
+		}
+
+		// 3. 만든 노드를 기존 heap에 넣어줌
+		// 이 과정을 반복하면 min heap 배열에는 최종적으로 root 노드만 남게 됨.
+		h.Push(merged)
+	}
+
+	// 인코딩 시작
+	root := h.Pop() // 힙에서 루트 노드 빼줌
+	em := map[rune]string{}
+	encodeHuff(root, "", em) // 말단 노드까지 가면서 코드 만들어줌. (내부 설명 참고)
+	encoded := ""
+	for _, r := range s {
+		encoded += em[r] // 맵에 s의 각 자소에 대한 코드가 담겼을 거고, 그걸 다 합쳐서 인코딩 된 글자를 만들어줌. (e.g., 100101110)
+	}
+	fmt.Println(encoded)
+
+	// 인코딩된 글자를 원본 글자로 바꿔주는 과정
+	decoded := decodeHuff(root, encoded) // 여기서도 말단노드까지 가면서 글자를 만듦. (내부 설명 참고)
+	fmt.Println(decoded)
+}
+
+func encodeHuff(node *NodeHuff, code string, em map[rune]string) {
+	if node == nil {
+		return
+	}
+
+	// 말단 노드에 도착했다면, 이때까지 축적된 인코딩된 코드를 맵에 넣어줌.
+	if node.left == nil && node.right == nil {
+		em[node.chara] = code // 말단 노드만 글자 갖고 있으니까, 그 글자까지 도달하는 데에 필요한 코드를 넣어줌
+		return
+	}
+
+	// 말단 노드까지 가기
+	// 왼쪽으로 갈땐 0을 붙여주고, 오른쪽으로 갈땐 1을 붙여줌
+	encodeHuff(node.left, code+"0", em)
+	encodeHuff(node.right, code+"1", em)
+}
+
+func decodeHuff(node *NodeHuff, encoded string) string {
+	res := ""
+	curr := node
+	for _, code := range encoded {
+		if code == '0' { // 인코딩 때와 마찬가지로, 0이면 왼쪽 1이면 오른쪽으로 감
+			curr = curr.left
+		} else {
+			curr = curr.right
+		}
+
+		// 말단 노드에 도달했을 때 비로소 글자가 있을 거니까
+		// 결과값에 글자를 붙여주고 다시 루트부터 다른 노드에 있는 글자를 찾으러 가야됨.
+		if curr.left == nil && curr.right == nil {
+			res += string(curr.chara)
+			curr = node
+		}
+	}
+
+	return res
+}
+
+type NodeHuff struct {
+	freq  int
+	chara rune
+	left  *NodeHuff
+	right *NodeHuff
+}
+
+type MinHeapHuff struct {
+	data []*NodeHuff
+}
+
+// leaf -> root
+func (r *MinHeapHuff) Push(node *NodeHuff) {
+	r.data = append(r.data, node)
+	r.upheap(len(r.data) - 1)
+}
+
+func (r *MinHeapHuff) upheap(child int) {
+	parent := (child - 1) / 2
+	if parent >= 0 && r.data[parent].freq > r.data[child].freq {
+		r.data[parent], r.data[child] = r.data[child], r.data[parent]
+		r.upheap(parent)
+	}
+}
+
+// root -> leaf
+func (r *MinHeapHuff) Pop() *NodeHuff {
+	if len(r.data) == 0 {
+		return nil
+	}
+
+	root := r.data[0]
+	r.data[0] = r.data[len(r.data)-1]
+	r.data = r.data[:len(r.data)-1]
+	r.downheap(0)
+
+	return root
+}
+
+func (r *MinHeapHuff) downheap(parent int) {
+	left := parent*2 + 1
+	right := parent*2 + 2
+	smallest := parent
+
+	if left < len(r.data) && r.data[left].freq < r.data[smallest].freq {
+		smallest = left
+	}
+	if right < len(r.data) && r.data[right].freq < r.data[smallest].freq {
+		smallest = right
+	}
+	if smallest != parent {
+		r.data[smallest], r.data[parent] = r.data[parent], r.data[smallest]
+		r.downheap(smallest)
+	}
 }
