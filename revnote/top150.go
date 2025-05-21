@@ -912,8 +912,8 @@ func calcEquation(equations [][]string, values []float64, queries [][]string) []
 
 	// 그래프로 풀어야 함.
 	// equations나 queries에 들어있는 글자들을 노드로 생각
-	// a / b = 2.0 이라면, a -> b 의 가중치가 2 이며, b -> a의 가중치는 0.5 가 됨.
-	// 여기서 만약 b / c = 3.0 이라면, b -> c 가중치는 3이고, c -> b 가중치난 1/3이 됨.
+	// a / b = 2.0 이라면, a -> b 의 가중치가 2 이며, b -> a의 가중치는 1/2 가 됨.
+	// 여기서 만약 b / c = 3.0 이라면, b -> c 가중치는 3이고, c -> b 가중치는 1/3이 됨.
 	// 그러면 a -> c 가중치가 a -> b -> c 에서 나오게 되는 거고, 가중치는 배수를 말하는 거니까
 	// 2 * 3 = 6 이 되어야 함.
 	// 따라서, equations에 들어있는 모든 노드들에 대해서 values의 가중치를 갖는 그래프를 만들어줌.
@@ -1132,16 +1132,16 @@ func isValidBST(root *TreeNode) bool {
 	return validate(root, math.MinInt64, math.MaxInt64)
 }
 
-func validate(root *TreeNode, min, max int) bool {
-	if root == nil {
+func validate(node *TreeNode, min, max int) bool {
+	if node == nil {
 		return true
 	}
 
-	if root.Val <= min || max <= root.Val {
+	if node.Val <= min || max <= node.Val {
 		return false
 	}
 
-	return validate(root.Left, min, root.Val) && validate(root.Right, root.Val, max)
+	return validate(node.Left, min, node.Val) && validate(node.Right, node.Val, max)
 }
 
 /**
